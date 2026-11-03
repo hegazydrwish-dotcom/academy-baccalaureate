@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10243a">
+  <meta name="description" content="أكاديمية البكالوريا المصرية - منصة تعليمية لدعم الطلاب وتحقيق التفوق.">
+  <title>أكاديمية البكالوريا المصرية</title>
+  <style>
+    :root {
+      --navy: #10243a;
+      --navy2: #193853;
+      --gold: #e8bd62;
+      --cream: #f8f6f0;
+      --text: #243447;
+      --muted: #6b7887;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.8;
+    }
+    a { text-decoration: none; }
+    .container { width: min(1080px, 92%); margin: auto; }
+    header {
+      background: var(--navy);
+      color: white;
+      border-bottom: 3px solid var(--gold);
+    }
+    nav {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-weight: bold;
+      font-size: 17px;
+    }
+    .logo {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      background: var(--gold);
+      color: var(--navy);
+      border-radius: 12px;
+      font-size: 25px;
+    }
+    .navlinks { display: flex; gap: 18px; flex-wrap: wrap; }
+    .navlinks a { color: #f5f1e8; font-size: 14px; }
+    .hero {
+      background: linear-gradient(140deg, var(--navy), var(--navy2));
+      color: white;
+      padding: 65px 0 72px;
+      overflow: hidden;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 30px;
+      align-items: center;
+    }
+    .eyebrow { color: var(--gold); font-weight: bold; }
+    h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.4; margin: 10px 0; }
+    .hero p { color: #e0e7ef; max-width: 570px; }
+    .hero-art {
+      text-align: center;
+      font-size: 100px;
+      background: #ffffff0b;
+      border: 1px solid #ffffff25;
+      border-radius: 28px;
+      padding: 22px;
+    }
+    .btn {
+      display: inline-block;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 20px;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 1px solid #ffffff80;
+      margin-right: 8px;
+    }
+    section { padding: 45px 0; }
+    .section-title { text-align: center; margin-bottom: 26px; }
+    .section-title h2 { color: var(--navy); margin-bottom: 4px; }
+    .section-title p { color: var(--muted); margin-top: 0; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    .feature {
+      background: white;
+      border: 1px solid #e8e5dc;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+    }
+    .feature-icon { font-size: 32px; }
+    .feature h3 { margin: 8px 0 4px; color: var(--navy); }
+    .feature p { margin: 0; color: var(--muted); font-size: 14px; }
+    .courses { background: #eeece5; }
+    .course-card {
+      max-width: 680px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 20px;
+      align-items: center;
+      background: white;
+      border: 1px solid #e4dfd2;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 8px 25px #10243a0a;
+    }
+    .course-art {
+      min-height: 150px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--navy);
+      font-size: 65px;
+    }
+    .course-card h3 { color: var(--navy); margin: 0; }
+    .tag {
+      display: inline-block;
+      background: #e7f5e9;
+      color: #216a36;
+      border-radius: 7px;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .price { font-size: 21px; font-weight: bold; color: var(--navy); }
+    .muted { color: var(--muted); font-size: 14px; }
+    .trial {
+      background: white;
+      border: 1px solid #e4dfd2;
+      border-radius: 15px;
+      padding: 22px;
+      text-align: center;
+      margin-top: 18px;
+    }
+    footer {
+      background: var(--navy);
+      color: white;
+      text-align: center;
+      padding: 25px 12px;
+    }
+    footer p { margin: 4px; color: #d9e1e9; font-size: 13px; }
+    @media (max-width: 650px) {
+      .hero { padding: 40px 0; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-art { font-size: 75px; padding: 10px; }
+      .features { grid-template-columns: 1fr; }
+      .course-card { grid-template-columns: 1fr; }
+      .course-art { min-height: 100px; }
+      .navlinks { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="#">
+          <span class="logo">📚</span>
+          <span>أكاديمية البكالوريا المصرية</span>
+        </a>
+        <div class="navlinks">
+          <a href="#home">الرئيسية</a>
+          <a href="#courses">الكورسات</a>
+          <a href="#about">عن الأكاديمية</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-inner">
+        <div>
+          <div class="eyebrow">رحلتك نحو التفوق تبدأ هنا</div>
+          <h1>اتعلّم بذكاء، وتقدّم بثقة</h1>
+          <p>
+            مرحبًا بك في أكاديمية البكالوريا المصرية.
+            اكتشف الدروس التعليمية المنظمة وابدأ رحلتك نحو فهم أفضل ومذاكرة أكثر فاعلية.
+          </p>
+          <a class="btn" href="#courses">تصفح الكورسات</a>
+          <a class="btn btn-outline" href="#about">اعرف المزيد</a>
+        </div>
+        <div class="hero-art" aria-hidden="true">🏛️📖</div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-title">
+          <h2>لماذا أكاديميتنا؟</h2>
+          <p>تعلّم بطريقة منظمة وفي مكان واحد.</p>
+        </div>
+        <div class="features">
+          <article class="feature">
+            <div class="feature-icon">🎓</div>
+            <h3>محتوى تعليمي</h3>
+            <p>دروس مرتبة لتسهيل رحلة المذاكرة.</p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">📱</div>
+            <h3>مناسبة للموبايل</h3>
+            <p>واجهة سهلة الاستخدام على الهاتف والكمبيوتر.</p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">📚</div>
+            <h3>تعلّم خطوة بخطوة</h3>
+            <p>ابدأ بالمقدمة وتابع الدروس حسب ترتيبها.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="courses" id="courses">
+      <div class="container">
+        <div class="section-title">
+          <h2>الكورسات التعليمية</h2>
+          <p>اختر الكورس الذي تريد التعلم منه.</p>
+        </div>
+        <article class="course-card">
+          <div class="course-art" aria-hidden="true">🏺</div>
+          <div>
+            <span class="tag">كورس تجريبي متاح</span>
+            <h3>التاريخ المصري</h3>
+            <p class="muted">الصف الثاني الثانوي — البكالوريا المصرية</p>
+            <p>ابدأ بالتعرّف على مقدمة في التاريخ المصري.</p>
+            <div class="price">250 جنيهًا</div>
+            <a class="btn" href="#trial">تفاصيل الدرس التجريبي</a>
+          </div>
+        </article>
+        <div class="trial" id="trial">
+          <h3>مقدمة في التاريخ المصري</h3>
+          <p>هذا الدرس مخصص للتجربة والتعرّف على محتوى الأكاديمية.</p>
+          <p class="muted">سيتم ربط محتوى الدرس بقاعدة بيانات الأكاديمية في الخطوة التالية.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>أكاديمية البكالوريا المصرية</strong>
+    <p>العلم طريقك إلى المستقبل</p>
+    <p>© 2026 أكاديمية البكالوريا المصرية — جميع الحقوق محفوظة</p>
+  </footer>
+</body>
+</html>
