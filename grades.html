@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10243a">
+<title>اختيار الصف الدراسي | منصة الخلاصة التعليمية</title>
+<style>
+:root{--navy:#10243a;--navy2:#193853;--gold:#e8bd62;--cream:#f8f6f0;--text:#243447;--muted:#6b7887}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:var(--cream);color:var(--text);line-height:1.8}
+header{background:var(--navy);color:#fff;border-bottom:3px solid var(--gold);padding:18px 5%}
+.brand{font-weight:bold;font-size:20px}
+.wrap{width:min(900px,92%);margin:42px auto}
+.intro{text-align:center;margin-bottom:28px}
+.intro h1{color:var(--navy);margin:0 0 8px}
+.intro p{color:var(--muted);margin:0}
+.panel{background:#fff;border:1px solid #e4dfd2;border-radius:20px;padding:26px;box-shadow:0 8px 25px #10243a0a}
+.group-title{color:var(--navy);font-size:18px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.grade{border:2px solid #e4dfd2;border-radius:15px;background:#fff;padding:20px 12px;text-align:center;color:var(--navy);font:inherit;cursor:pointer;transition:.15s}
+.grade strong{display:block;font-size:19px}
+.grade span{font-size:13px;color:var(--muted)}
+.grade.active{border-color:var(--gold);background:#fffaf0;box-shadow:0 0 0 2px #e8bd6233}
+.result{margin-top:8px;padding:16px;border-radius:12px;background:#f3f1eb;text-align:center;color:var(--navy)}
+.result strong{color:var(--navy)}
+.hint{font-size:13px;color:var(--muted);text-align:center;margin:16px 0 0}
+.back{display:inline-block;margin-top:20px;color:var(--navy);font-weight:bold;text-decoration:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.wrap{margin:25px auto}.panel{padding:18px}.grade{padding:15px}}
+</style>
+</head>
+<body>
+<header><div class="brand">📚 منصة الخلاصة التعليمية</div></header>
+<main class="wrap">
+<div class="intro">
+<h1>اختر صفك الدراسي</h1>
+<p>ابدأ رحلتك التعليمية باختيار الصف المناسب لك.</p>
+</div>
+<section class="panel" aria-label="اختيار الصف الدراسي">
+<h2 class="group-title">المرحلة الإعدادية</h2>
+<div class="grid">
+<button class="grade" type="button" data-grade="الصف الأول الإعدادي" aria-pressed="false"><strong>الصف الأول الإعدادي</strong><span>المرحلة الإعدادية</span></button>
+<button class="grade" type="button" data-grade="الصف الثاني الإعدادي" aria-pressed="false"><strong>الصف الثاني الإعدادي</strong><span>المرحلة الإعدادية</span></button>
+<button class="grade" type="button" data-grade="الصف الثالث الإعدادي" aria-pressed="false"><strong>الصف الثالث الإعدادي</strong><span>المرحلة الإعدادية</span></button>
+</div>
+<h2 class="group-title">المرحلة الثانوية</h2>
+<div class="grid">
+<button class="grade" type="button" data-grade="الصف الأول الثانوي" aria-pressed="false"><strong>الصف الأول الثانوي</strong><span>المرحلة الثانوية</span></button>
+<button class="grade active" type="button" data-grade="الصف الثاني الثانوي" aria-pressed="true"><strong>الصف الثاني الثانوي</strong><span>المرحلة الثانوية</span></button>
+<button class="grade" type="button" data-grade="الصف الثالث الثانوي" aria-pressed="false"><strong>الصف الثالث الثانوي</strong><span>المرحلة الثانوية</span></button>
+</div>
+<div class="result" aria-live="polite">الصف المختار: <strong id="selected">الصف الثاني الثانوي</strong></div>
+<p class="hint">اختيار الصف هنا معاينة أولية فقط، ولا يغيّر بيانات الكورسات أو قاعدة البيانات.</p>
+</section>
+<a class="back" href="index.html">← العودة إلى الصفحة الرئيسية</a>
+</main>
+<script>
+const buttons=document.querySelectorAll('.grade');
+const selected=document.getElementById('selected');
+buttons.forEach(button=>button.addEventListener('click',()=>{
+  buttons.forEach(item=>{
+    item.classList.remove('active');
+    item.setAttribute('aria-pressed','false');
+  });
+  button.classList.add('active');
+  button.setAttribute('aria-pressed','true');
+  selected.textContent=button.dataset.grade;
+}));
+</script>
+</body>
+</html>
