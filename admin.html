@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة المدير | الخلاصة التعليمية</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f4f6;font-family:Tahoma,Arial;color:#172b40}
+header{background:#10243a;color:#e8bd62;text-align:center;padding:22px}
+.container{max-width:850px;margin:25px auto;padding:15px}
+.card{background:white;padding:22px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 12px #0001}
+h2{color:#10243a}
+input,textarea{width:100%;padding:13px;margin:8px 0;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button{border:0;border-radius:8px;padding:12px 18px;margin:5px;cursor:pointer;font-size:15px}
+.primary{background:#10243a;color:#e8bd62}
+.secondary{background:#e8bd62;color:#10243a}
+.danger{background:#a83232;color:white}
+.item{border:1px solid #ddd;padding:14px;border-radius:9px;margin:10px 0}
+small{color:#666}
+#dashboard,#loginBox{display:none}
+.status{white-space:pre-wrap;color:#9b2525}
+</style>
+</head>
+<body>
+
+<header>
+<h1>منصة الخلاصة التعليمية</h1>
+<p>لوحة تحكم المدير</p>
+</header>
+
+<div class="container">
+
+<div class="card" id="loginBox">
+<h2>دخول المدير</h2>
+<input id="email" type="email" placeholder="البريد الإلكتروني">
+<input id="password" type="password" placeholder="كلمة المرور">
+<button class="primary" onclick="login()">تسجيل الدخول</button>
+<p id="status" class="status"></p>
+</div>
+
+<div id="dashboard">
+
+<div class="card">
+<h2>مرحبًا بك في لوحة الإدارة</h2>
+<p id="welcome"></p>
+<button class="danger" onclick="logout()">تسجيل الخروج</button>
+</div>
+
+<div class="card">
+<h2>إضافة إعلان جديد</h2>
+<textarea id="announcement" rows="3" placeholder="اكتب نص الإعلان هنا"></textarea>
+<button class="primary" onclick="addAnnouncement()">نشر الإعلان</button>
+<p id="announcementStatus"></p>
+</div>
+
+<div class="card">
+<h2>الإعلانات الحالية</h2>
+<button class="secondary" onclick="loadAnnouncements()">تحديث القائمة</button>
+<div id="announcementList">جارٍ تحميل الإعلانات...</div>
+</div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const db = window.supabase.createClient(
+"https://kadldmmcrskvqfagtxpd.supabase.co",
+"sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV"
+);
+
+const ADMIN_EMAIL = "hegazydrwish@gmail.com";
+
+function showLogin(message=""){
+document.getElementById("loginBox").style.display="block";
+document.getElementById("dashboard").style.display="none";
+document.getElementById("status").textContent=message;
+}
+
+function showDashboard(email){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("dashboard").style.display="block";
+document.getElementById("welcome").textContent="تم تسجيل الدخول: "+email;
+}
+
+async function verifyAdmin(){
+const {data,error}=await db.auth.getUser();
+
+if(error || !data.user){
+showLogin();
+return;
+}
+
+const user=data.user;
+
+if((user.email || "").toLowerCase() !== ADMIN_EMAIL.toLowerCase()){
+await db.auth.signOut();
+showLogin("هذا الحساب ليس حساب المدير المعتمد.");
+return;
+}
+
+const {data:staff,error:staffError}=await db
+.from("academy_staff")
+.select("role,active")
+.eq("user_id",user.id)
+.eq("role","admin")
+.eq("active",true)
+.maybeSingle();
+
+if(staffError || !staff){
+await db.auth.signOut();
+showLogin("لم يتم التحقق من صلاحية المدير. راجع صلاحيات قاعدة البيانات.");
+return;
+}
+
+showDashboard(user.email);
+loadAnnouncements();
+}
+
+async function login(){
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+const status=document.getElementById("status");
+
+if(!email || !password){
+status.textContent="أدخل البريد الإلكتروني وكلمة المرور.";
+return;
+}
+
+status.textContent="جارٍ التحقق من البيانات...";
+
+const {error}=await db.auth.signInWithPassword({email,password});
+
+if(error){
+status.textContent="تعذر تسجيل الدخول: "+error.message;
+return;
+}
+
+await verifyAdmin();
+}
+
+async function logout(){
+await db.auth.signOut();
+showLogin("تم تسجيل الخروج.");
+}
+
+async function addAnnouncement(){
+const message=document.getElementById("announcement").value.trim();
+const status=document.getElementById("announcementStatus");
+
+if(!message){
+status.textContent="اكتب نص الإعلان أولًا.";
+return;
+}
+
+status.textContent="جارٍ نشر الإعلان...";
+
+const {error}=await db
+.from("academy_announcements")
+.insert([{message:message,active:true}]);
+
+if(error){
+status.textContent="تعذر النشر: "+error.message;
+return;
+}
+
+document.getElementById("announcement").value="";
+status.textContent="تم نشر الإعلان بنجاح.";
+loadAnnouncements();
+}
+
+async function loadAnnouncements(){
+const list=document.getElementById("announcementList");
+list.textContent="جارٍ تحميل الإعلانات...";
+
+const {data,error}=await db
+.from("academy_announcements")
+.select("id,message,active,created_at")
+.order("created_at",{ascending:false});
+
+if(error){
+list.textContent="تعذر تحميل الإعلانات: "+error.message;
+return;
+}
+
+list.innerHTML="";
+
+if(!data || data.length===0){
+list.textContent="لا توجد إعلانات حتى الآن.";
+return;
+}
+
+data.forEach(item=>{
+const box=document.createElement("div");
+box.className="item";
+
+const message=document.createElement("p");
+message.textContent=item.message;
+
+const state=document.createElement("small");
+state.textContent=item.active ? "الإعلان مفعّل" : "الإعلان متوقف";
+
+const button=document.createElement("button");
+button.className=item.active ? "danger" : "secondary";
+button.textContent=item.active ? "إيقاف الإعلان" : "تفعيل الإعلان";
+button.onclick=()=>toggleAnnouncement(item.id,!item.active);
+
+box.append(message,state,document.createElement("br"),button);
+list.appendChild(box);
+});
+}
+
+async function toggleAnnouncement(id,newState){
+const {error}=await db
+.from("academy_announcements")
+.update({active:newState})
+.eq("id",id);
+
+if(error){
+alert("تعذر تحديث الإعلان: "+error.message);
+return;
+}
+
+loadAnnouncements();
+}
+
+db.auth.onAuthStateChange((event,session)=>{
+if(event==="SIGNED_OUT"){
+showLogin();
+}
+});
+
+verifyAdmin();
+</script>
+
+</body>
+</html>
