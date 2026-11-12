@@ -204,7 +204,7 @@
        style="display:block;width:100%;max-width:900px;height:auto;margin:auto;border-radius:14px;">
 </section>
   <div style="background:#10243a;color:#f2c568;padding:13px 0;border-top:2px solid #e8bd62;border-bottom:2px solid #e8bd62;font-weight:bold;font-size:16px;">
-  <marquee direction="left" scrollamount="5" onmouseover="this.stop()" onmouseout="this.start()">
+  <marquee id="announcementTicker" direction="left" scrollamount="5" onmouseover="this.stop()" onmouseout="this.start()">
     📢 أهلاً بكم في منصة الخلاصة التعليمية
     &nbsp; ⭐ تعلم بذكاء وتقدم بثقة
     &nbsp; 📚 تابعوا الدروس الجديدة باستمرار
@@ -313,7 +313,44 @@ const db = window.supabase.createClient(
   "https://kadldmmcrskvqfagtxpd.supabase.co",
   "sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV"
 );
+const msg = document.getElementById("authmsg"); 
+  async function loadAnnouncements() {
+  const ticker = document.getElementById("announcementTicker");
+  if (!ticker) return;
 
+  const { data, error } = await db
+    .from("academy_announcements")
+    .select("message, starts_at, ends_at")
+    .eq("active", true);
+
+  if (error) {
+    console.error("Announcement error:", error);
+    return;
+  }
+
+  const now = Date.now();
+
+  const visible = (data || []).filter(item => {
+    if (!item.message) return false;
+
+    const start = item.starts_at
+      ? new Date(item.starts_at).getTime() : null;
+
+    const end = item.ends_at
+      ? new Date(item.ends_at).getTime() : null;
+
+    return (!start || start <= now) &&
+           (!end || end >= now);
+  });
+
+  if (visible.length) {
+    ticker.textContent = visible
+      .map(item => "📢 " + item.message)
+      .join("   ⭐   ");
+  }
+}
+
+loadAnnouncements();
 const msg = document.getElementById("authmsg");
 
 async function refreshStudent() {
