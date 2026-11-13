@@ -311,12 +311,24 @@
 <script>
 const db = window.supabase.createClient(
   "https://kadldmmcrskvqfagtxpd.supabase.co",
-  "sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV"
+  "sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV",
+  {
+    auth: {
+      storageKey: "khulasa-student-auth-token"
+    }
+  }
 );
+  
+  
+    
+      
+    
+  
+
 const msg = document.getElementById("authmsg"); 
   async function loadAnnouncements() {
   const ticker = document.getElementById("announcementTicker");
-  if (!ticker) return;
+  if (!ticker) return; من 
 
   const { data, error } = await db
     .from("academy_announcements")
