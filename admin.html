@@ -67,9 +67,15 @@ small{color:#666}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const db = window.supabase.createClient(
-"https://kadldmmcrskvqfagtxpd.supabase.co",
-"sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV"
+  "https://kadldmmcrskvqfagtxpd.supabase.co",
+  "sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV",
+  {
+    auth: {
+      storageKey: "khulasa-admin-auth-token"
+    }
+  }
 );
+
 
 const ADMIN_EMAIL = "hegazydrwish@gmail.com";
 
