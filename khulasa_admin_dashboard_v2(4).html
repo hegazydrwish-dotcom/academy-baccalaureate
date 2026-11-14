@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10243a">
+<title>لوحة المدير | منصة الخلاصة التعليمية</title>
+<style>
+:root{--navy:#10243a;--navy2:#193853;--gold:#e8bd62;--bg:#f3f6fa;--ink:#203247;--muted:#718096;--line:#e4eaf1;--white:#fff;--green:#18794e;--red:#a83232;--amber:#946200;--shadow:0 8px 24px #10243a0b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink);line-height:1.65}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;font-weight:700}.hidden{display:none!important}
+.topbar{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-bottom:4px solid var(--gold);padding:18px 20px}.topinner{max-width:1400px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand h1{margin:0;color:var(--gold);font-size:clamp(20px,3vw,28px)}.brand p{margin:3px 0 0;color:#dbe5ef;font-size:13px}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.top-actions span{font-size:12px;color:#dbe5ef}.wrap{max-width:1400px;margin:22px auto;padding:0 16px}
+.login{max-width:460px;margin:55px auto;background:#fff;padding:26px;border-radius:18px;box-shadow:var(--shadow)}.login h2{margin-top:0;color:var(--navy)}input,select,textarea{width:100%;padding:12px;border:1px solid #ccd6e1;border-radius:10px;margin:6px 0;background:#fff;color:var(--ink)}label{display:block;font-size:13px;font-weight:700;margin-top:10px}.primary{background:var(--navy);color:var(--gold)}.gold{background:var(--gold);color:var(--navy)}.light{background:#edf2f7;color:var(--navy)}.danger{background:var(--red);color:#fff}.status{white-space:pre-wrap;font-size:13px;color:var(--red);min-height:20px}.muted{color:var(--muted)}.tiny{font-size:12px}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}.sidebar{background:var(--navy);color:#fff;border-radius:16px;padding:14px;position:sticky;top:12px}.side-head{padding:8px 10px 14px;color:var(--gold);font-weight:700;border-bottom:1px solid #ffffff25;margin-bottom:9px}.nav{display:grid;gap:4px}.nav button{background:transparent;color:#eaf0f6;text-align:right;padding:10px 11px;font-size:13px;font-weight:600}.nav button:hover,.nav button.active{background:#ffffff18;color:var(--gold)}.nav .group{color:#9fb3c7;font-size:11px;padding:10px 10px 2px}
+.content{min-width:0}.welcome{background:#fff;padding:17px 20px;border-radius:15px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}.welcome h2{margin:0;color:var(--navy);font-size:20px}.panel{display:none}.panel.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:15px;box-shadow:var(--shadow)}.card h3{margin:0 0 12px;color:var(--navy);font-size:17px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:27px;color:var(--navy);margin-top:4px}.stat small{font-size:11px;color:var(--muted)}.notice{background:#fff8e8;border-right:4px solid var(--gold);padding:12px 14px;border-radius:10px;color:#684c16;font-size:13px;margin:12px 0}.success{background:#eaf6ef;border-right:4px solid var(--green);padding:12px 14px;border-radius:10px;color:#17613f;font-size:13px}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile{border:1px solid var(--line);border-radius:12px;padding:14px}.tile b{display:block;color:var(--navy);margin-bottom:4px}.tile p{margin:0;color:var(--muted);font-size:12px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}.toolbar input{flex:1;min-width:180px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:right;padding:11px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--navy);background:#f7f9fc}.pill{display:inline-block;padding:3px 9px;border-radius:20px;background:#edf2f7;font-size:11px}.pill.ok{background:#e8f5ee;color:var(--green)}.pill.wait{background:#fff4dc;color:var(--amber)}.empty{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:16px;color:var(--muted);font-size:13px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.nav{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.wrap{padding:0 10px;margin:12px auto}.card{padding:14px}.nav{grid-template-columns:repeat(2,minmax(0,1fr))}.nav button{font-size:11px;padding:9px 7px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.tiles,.two{grid-template-columns:1fr}.welcome{padding:14px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topinner"><div class="brand"><h1>منصة الخلاصة التعليمية</h1><p>لوحة المدير الشاملة لإدارة المنصة التعليمية</p></div><div class="top-actions"><span id="connection">غير متصل</span><button id="logoutBtn" class="danger hidden" onclick="logout()">تسجيل الخروج</button></div></div></header>
+<main class="wrap">
+<section id="loginBox" class="login">
+<h2>دخول المدير</h2><p class="muted">استخدم حساب المدير المعتمد للدخول إلى لوحة الإدارة.</p>
+<label for="email">البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" placeholder="البريد الإلكتروني">
+<label for="password">كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+<button class="primary" style="width:100%;margin-top:8px" onclick="login()">تسجيل الدخول</button><p id="loginStatus" class="status"></p>
+<div class="notice">لا تشارك كلمة المرور أو مفتاحًا سريًا مع أي شخص. المفتاح الموجود في هذه الصفحة من نوع Publishable/Anon المخصص للواجهة فقط.</div>
+</section>
+<section id="dashboard" class="hidden">
+<div class="welcome"><div><h2>مرحبًا بك في لوحة المدير</h2><div id="welcomeText" class="muted tiny"></div></div><span class="pill ok">مساحة الإدارة</span></div>
+<div class="layout">
+<aside class="sidebar"><div class="side-head">أقسام التحكم</div><nav class="nav" id="navigation">
+<div class="group">الرئيسية</div>
+<button class="active" data-panel="overview">🏠 الرئيسية والإحصائيات</button>
+<div class="group">الإدارة التعليمية</div>
+<button data-panel="grades">🎓 المراحل والصفوف</button><button data-panel="subjects">📘 المواد الدراسية</button><button data-panel="courses">📚 الكورسات</button><button data-panel="lessons">🎬 الدروس والمحتوى</button><button data-panel="library">📁 مكتبة الملفات</button>
+<div class="group">المستخدمون</div>
+<button data-panel="students">👨‍🎓 الطلاب</button><button data-panel="teachers">👩‍🏫 المعلمون</button><button data-panel="staff">🛡️ فريق الإدارة والصلاحيات</button>
+<div class="group">التقييم والاشتراكات</div>
+<button data-panel="questions">❓ بنك الأسئلة</button><button data-panel="exams">📝 الاختبارات والتصحيح</button><button data-panel="purchases">💳 المشتريات والاشتراكات</button>
+<div class="group">التواصل والتقارير</div>
+<button data-panel="announcements">📢 الإعلانات والتنبيهات</button><button data-panel="live">📡 البث المباشر</button><button data-panel="reports">📊 التقارير</button><button data-panel="settings">⚙️ إعدادات المنصة</button>
+</nav></aside>
+<div class="content">
+<section id="panel-overview" class="panel active">
+<div class="card"><h3>ملخص المنصة</h3><p class="muted tiny">الأرقام التالية تُقرأ من الجداول المعروفة في إعداد المشروع. ظهور شرطة يعني أن الجدول أو صلاحية القراءة تحتاج مراجعة.</p>
+<div class="stats">
+<div class="stat"><span>الكورسات</span><strong id="countCourses">—</strong><small>academy_courses</small></div><div class="stat"><span>الدروس</span><strong id="countLessons">—</strong><small>academy_lessons</small></div><div class="stat"><span>طلبات الشراء</span><strong id="countPurchases">—</strong><small>academy_purchases</small></div><div class="stat"><span>المواد</span><strong id="countSubjects">—</strong><small>academy_subjects</small></div>
+</div><div class="toolbar"><button class="gold" onclick="loadOverview()">تحديث الإحصائيات</button><span id="overviewStatus" class="muted tiny"></span></div></div>
+<div class="notice">هذه نسخة تأسيسية مستقلة. لن يتم افتراض أعمدة أو إنشاء جداول جديدة أو تغيير بيانات قائمة قبل فحص مخطط قاعدة بيانات Supabase وسياسات الحماية RLS.</div>
+<div class="card"><h3>خريطة وظائف المنصة</h3><div class="tiles">
+<div class="tile"><b>إدارة العملية التعليمية</b><p>المراحل والصفوف والمواد والكورسات والدروس والملفات التعليمية.</p></div>
+<div class="tile"><b>إدارة المستخدمين</b><p>ملفات الطلاب والمعلمين، حالات الحسابات، وفريق الإدارة.</p></div>
+<div class="tile"><b>الاختبارات والتقييم</b><p>بنك الأسئلة، نماذج الامتحانات، التصحيح والنتائج.</p></div>
+<div class="tile"><b>الاشتراكات والتحصيل</b><p>طلبات الشراء، مراجعة الدفع، وتفعيل الاشتراكات.</p></div>
+<div class="tile"><b>التواصل</b><p>الإعلانات والتنبيهات ومواعيد البث وأرشيف المحاضرات.</p></div>
+<div class="tile"><b>المتابعة</b><p>التقارير والإحصائيات وسجل النشاط وإعدادات المنصة.</p></div>
+</div></div>
+</section>
+<section id="panel-grades" class="panel"><div class="card"><h3>المراحل والصفوف الدراسية</h3><p>إدارة المراحل من أولى إعدادي حتى ثالثة ثانوي، وإضافة الصفوف وربطها بالمواد والكورسات.</p><div class="empty">بانتظار مراجعة الجداول الحالية لمعرفة هل بيانات الصفوف محفوظة داخل academy_courses أو academy_subjects أم في جدول مستقل.</div></div></section>
+<section id="panel-subjects" class="panel"><div class="card"><h3>المواد الدراسية</h3><p>إضافة المواد وتحديد المرحلة والصف وربط المادة بالمعلمين والكورسات.</p><div class="empty">سيتم تفعيل العرض والإضافة والتعديل بعد تأكيد أسماء الأعمدة والعلاقات في academy_subjects.</div></div></section>
+<section id="panel-courses" class="panel">
+<div class="card"><h3>إدارة الكورسات</h3><p class="muted tiny">إضافة وتعديل الكورسات باستخدام الأعمدة التي تم التحقق منها في academy_courses.</p>
+<div class="two"><div><label>اسم الكورس</label><input id="courseTitle" placeholder="مثال: كورس التاريخ"></div><div><label>الصف الدراسي</label><input id="courseGrade" placeholder="مثال: الثاني الثانوي"></div></div>
+<label>وصف الكورس</label><textarea id="courseDescription" rows="2" placeholder="وصف مختصر للكورس"></textarea>
+<div class="two"><div><label>السعر بالجنيه</label><input id="coursePrice" type="number" min="0" step="0.01" value="250"></div><div><label>حالة الكورس</label><select id="coursePublished"><option value="true">منشور</option><option value="false">مسودة</option></select></div></div>
+<label><input id="courseFree" type="checkbox" style="width:auto"> كورس مجاني</label>
+<div class="toolbar"><button class="gold" onclick="saveCourse()">حفظ الكورس</button><button class="light" onclick="resetCourseForm()">تفريغ الحقول</button><button class="light" onclick="loadCourses()">تحديث القائمة</button><span id="courseStatus" class="muted tiny"></span></div>
+<input id="courseEditId" type="hidden"><div class="tablewrap"><table><thead><tr><th>رقم</th><th>اسم الكورس</th><th>الصف</th><th>السعر</th><th>النشر</th><th>إجراء</th></tr></thead><tbody id="coursesRows"><tr><td colspan="6">اضغط تحديث القائمة لعرض البيانات</td></tr></tbody></table></div>
+</div></section>
+<section id="panel-lessons" class="panel"><div class="card"><h3>إدارة الدروس والمحتوى</h3><p class="muted tiny">إضافة وتعديل الدروس وربطها بالكورس. رفع الملفات والفيديوهات سيُضاف بعد إعداد Storage.</p>
+<label>الكورس</label><select id="lessonCourse"></select><label>عنوان الدرس</label><input id="lessonTitle" placeholder="عنوان الدرس"><label>المحتوى النصي</label><textarea id="lessonContent" rows="3" placeholder="محتوى الدرس"></textarea>
+<div class="two"><div><label>رابط الفيديو (اختياري)</label><input id="lessonVideo" type="url" placeholder="https://..."></div><div><label>ترتيب الدرس</label><input id="lessonOrder" type="number" min="1" value="1"></div></div>
+<label><input id="lessonFree" type="checkbox" style="width:auto"> درس مجاني</label><div class="toolbar"><button class="gold" onclick="saveLesson()">حفظ الدرس</button><button class="light" onclick="resetLessonForm()">تفريغ الحقول</button><button class="light" onclick="loadLessons()">تحديث الدروس</button><span id="lessonStatus" class="muted tiny"></span></div>
+<input id="lessonEditId" type="hidden"><div class="tablewrap"><table><thead><tr><th>رقم</th><th>الكورس</th><th>الدرس</th><th>الترتيب</th><th>مجاني</th><th>إجراء</th></tr></thead><tbody id="lessonsRows"><tr><td colspan="6">اضغط تحديث الدروس لعرض البيانات</td></tr></tbody></table></div></div></section>
+<section id="panel-library" class="panel"><div class="card"><h3>مكتبة الملفات التعليمية</h3><p>رفع ملفات PDF والملفات المساندة وتنظيمها حسب المرحلة والصف والمادة والكورس.</p><div class="notice">رفع الملفات يحتاج تحديد Storage Bucket وسياسات القراءة والتحميل. لن نضع ملفات الطلاب أو المحتوى المدفوع في مساحة عامة دون مراجعة الحماية.</div><div class="empty">واجهة تنظيم المكتبة جاهزة للتوصيل بعد فحص إعدادات Supabase Storage.</div></div></section>
+<section id="panel-students" class="panel"><div class="card"><h3>إدارة الطلاب</h3><p>البحث عن الطالب، عرض بياناته وصفه، حالة الحساب، والكورسات المشترك بها.</p><div class="empty">نحتاج تحديد جدول ملف الطالب وربطه الآمن بحسابات Supabase Auth قبل عرض أو تعديل بيانات شخصية.</div></div></section>
+<section id="panel-teachers" class="panel"><div class="card"><h3>إدارة المعلمين</h3><p>ملفات المعلمين، المواد المسندة إليهم، الكورسات والدروس والمحاضرات.</p><div class="empty">نحتاج فحص جدول ملفات المعلمين وعلاقته بحسابات المستخدمين قبل تفعيل الإدارة.</div></div></section>
+<section id="panel-staff" class="panel"><div class="card"><h3>فريق الإدارة والصلاحيات</h3><p>أدوار مقترحة: مدير عام، مساعد محتوى، مسؤول إعلانات، شؤون طلاب، متابعة.</p><div id="staffStatus" class="empty">سيتم فحص academy_staff وأدواره الحالية أولًا. لا يكفي إخفاء الأزرار؛ يجب فرض الصلاحيات في قاعدة البيانات أيضًا.</div></div></section>
+<section id="panel-questions" class="panel"><div class="card"><h3>بنك الأسئلة</h3><p>تصنيف الأسئلة حسب المادة والصف والدرس والوحدة ومستوى الصعوبة ونوع السؤال.</p><div class="empty">لا يوجد في الملفات المرسلة ما يثبت اسم جدول بنك الأسئلة أو بنيته؛ لن ننشئ بنية تخمينية قبل الاتفاق عليها.</div></div></section>
+<section id="panel-exams" class="panel"><div class="card"><h3>الاختبارات والتصحيح الإلكتروني</h3><p>إنشاء امتحانات، تحديد زمن ودرجة، اختيار الأسئلة، تصحيح الإجابات الموضوعية، وإظهار النتائج.</p><div class="empty">يحتاج هذا القسم إلى تصميم جداول الاختبارات والمحاولات والإجابات والنتائج، مع ضوابط تمنع كشف الإجابات قبل موعدها.</div></div></section>
+<section id="panel-purchases" class="panel"><div class="card"><h3>المشتريات والاشتراكات</h3><p class="muted tiny">عرض طلبات الشراء المسجلة. لا يتم اعتماد الدفع أو تفعيل اشتراك تلقائيًا من هذه الشاشة.</p><div class="toolbar"><button class="light" onclick="loadPurchases()">تحديث الطلبات</button><span id="purchaseStatus" class="muted tiny"></span></div><div class="tablewrap"><table><thead><tr><th>رقم</th><th>معرف المستخدم</th><th>الكورس</th><th>الحالة</th><th>المبلغ</th><th>مرجع الدفع</th><th>التاريخ</th></tr></thead><tbody id="purchasesRows"><tr><td colspan="7">اضغط تحديث الطلبات</td></tr></tbody></table></div></div></section>
+<section id="panel-announcements" class="panel"><div class="card"><h3>الإعلانات والتنبيهات</h3><p>نشر تنبيهات للطلاب والمعلمين وتحديد الجمهور ومدة ظهور الإعلان.</p><div class="empty">لم يتم التأكد من وجود جدول academy_announcements في قاعدة البيانات؛ سنربطه فقط بعد التحقق من وجوده وأعمدته.</div></div></section>
+<section id="panel-live" class="panel"><div class="card"><h3>البث المباشر وأرشيف المحاضرات</h3><p>تحديد موعد المحاضرة والمادة والصف والمعلم ورابط البث والتسجيل، وتحديد الوصول المجاني أو للمشتركين.</p><div class="empty">يحتاج إلى جدول للمحاضرات وسياسة واضحة لحماية روابط المحتوى المسجل.</div></div></section>
+<section id="panel-reports" class="panel"><div class="card"><h3>التقارير والمتابعة</h3><p>تقارير التسجيلات، نشاط الطلاب، الكورسات، الدروس، المبيعات، الاشتراكات، ونتائج الاختبارات.</p><div class="empty">ستُبنى التقارير بعد توحيد مصادر البيانات والتحقق من العلاقات، حتى تكون الأرقام صحيحة وليست تقديرية.</div></div></section>
+<section id="panel-settings" class="panel"><div class="card"><h3>إعدادات المنصة</h3><p>اسم المنصة، الشعار، بيانات التواصل، إعدادات التسجيل، وسياسات المحتوى.</p><div class="empty">نحتاج تحديد هل توجد إعدادات محفوظة حاليًا أم سننشئ جدول إعدادات بعد مراجعة قاعدة البيانات.</div></div></section>
+</div></div>
+<div class="footer">منصة الخلاصة التعليمية · لوحة المدير · نسخة تأسيسية مستقلة</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* يستخدم هذا الملف مفتاح Publishable/Anon للواجهة فقط. لا تضع Service Role Key في المتصفح. */
+const SUPABASE_URL="https://kadldmmcrskvqfagtxpd.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV";
+const ADMIN_EMAIL="hegazydrwish@gmail.com";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{storageKey:"khulasa-admin-auth-token",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);
+function showLogin(message=""){ $("loginBox").classList.remove("hidden");$("dashboard").classList.add("hidden");$("logoutBtn").classList.add("hidden");$("loginStatus").textContent=message;$("connection").textContent="غير متصل";}
+function showDashboard(email){$("loginBox").classList.add("hidden");$("dashboard").classList.remove("hidden");$("logoutBtn").classList.remove("hidden");$("welcomeText").textContent="تم تسجيل الدخول: "+email;$("connection").textContent="متصل بحساب الإدارة";}
+async function verifyAdmin(){
+ const {data,error}=await db.auth.getUser();
+ if(error||!data.user){showLogin();return false;}
+ const user=data.user;
+ if((user.email||"").toLowerCase()!==ADMIN_EMAIL.toLowerCase()){await db.auth.signOut();showLogin("هذا الحساب ليس حساب المدير المعتمد.");return false;}
+ const {data:staff,error:staffError}=await db.from("academy_staff").select("role,active").eq("user_id",user.id).eq("role","admin").eq("active",true).maybeSingle();
+ if(staffError||!staff){await db.auth.signOut();showLogin("تعذر التحقق من صلاحية المدير من academy_staff. راجع الجدول وسياسات RLS.");return false;}
+ showDashboard(user.email);await loadOverview();return true;
+}
+async function login(){
+ const email=$("email").value.trim(),password=$("password").value;
+ if(!email||!password){$("loginStatus").textContent="أدخل البريد الإلكتروني وكلمة المرور.";return;}
+ $("loginStatus").textContent="جارٍ التحقق من الحساب...";
+ const {error}=await db.auth.signInWithPassword({email,password});
+ if(error){$("loginStatus").textContent="تعذر تسجيل الدخول: "+error.message;return;}
+ await verifyAdmin();
+}
+async function logout(){await db.auth.signOut();showLogin("تم تسجيل الخروج.");}
+document.querySelectorAll("#navigation button[data-panel]").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id==="panel-"+btn.dataset.panel));
+ document.querySelectorAll("#navigation button[data-panel]").forEach(b=>b.classList.toggle("active",b===btn));
+ if(btn.dataset.panel==='courses')loadCourses();if(btn.dataset.panel==='lessons'){loadCourses().then(loadLessons);}if(btn.dataset.panel==='purchases')loadPurchases();
+}));
+async function countTable(table,target){
+ const el=$(target);el.textContent="…";
+ const {count,error}=await db.from(table).select("*",{count:"exact",head:true});
+ el.textContent=error?"—":String(count??0);
+ return !error;
+}
+async function loadOverview(){
+ const results=await Promise.all([
+ countTable("academy_courses","countCourses"),
+ countTable("academy_lessons","countLessons"),
+ countTable("academy_purchases","countPurchases"),
+ countTable("academy_subjects","countSubjects")
+ ]);
+ $("overviewStatus").textContent=results.every(Boolean)?"تم تحديث العدادات.":"بعض العدادات غير متاحة؛ راجع صلاحيات القراءة أو أسماء الجداول.";
+}
+
+function msg(id,text,isError=false){const e=$(id);e.textContent=text;e.style.color=isError?'#a83232':'#18794e';}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function resetCourseForm(){['courseTitle','courseGrade','courseDescription','courseEditId'].forEach(id=>$(id).value='');$('coursePrice').value='250';$('coursePublished').value='true';$('courseFree').checked=false;msg('courseStatus','');}
+async function loadCourses(){
+ $('coursesRows').innerHTML='<tr><td colspan="6">جارٍ التحميل...</td></tr>';
+ const {data,error}=await db.from('academy_courses').select('id,title,grade,description,price_egp,is_published,is_free').order('id',{ascending:true});
+ if(error){$('coursesRows').innerHTML='<tr><td colspan="6">تعذر تحميل الكورسات: '+esc(error.message)+'</td></tr>';return;}
+ $('coursesRows').innerHTML=(data||[]).map(c=>`<tr><td>${c.id}</td><td>${esc(c.title)}</td><td>${esc(c.grade)}</td><td>${esc(c.price_egp)} ج</td><td>${c.is_published?'منشور':'مسودة'}</td><td><button class="light" onclick="editCourse(${c.id})">تعديل</button></td></tr>`).join('')||'<tr><td colspan="6">لا توجد كورسات</td></tr>';
+ const sel=$('lessonCourse');const keep=sel.value;sel.innerHTML=(data||[]).map(c=>`<option value="${c.id}">${esc(c.title)} — ${esc(c.grade)}</option>`).join('')||'<option value="">لا توجد كورسات</option>';if(keep)sel.value=keep;
+}
+async function editCourse(id){const {data,error}=await db.from('academy_courses').select('id,title,grade,description,price_egp,is_published,is_free').eq('id',id).single();if(error){msg('courseStatus',error.message,true);return;} $('courseEditId').value=data.id;$('courseTitle').value=data.title||'';$('courseGrade').value=data.grade||'';$('courseDescription').value=data.description||'';$('coursePrice').value=data.price_egp??0;$('coursePublished').value=String(!!data.is_published);$('courseFree').checked=!!data.is_free;window.scrollTo({top:0,behavior:'smooth'});}
+async function saveCourse(){const id=$('courseEditId').value;const title=$('courseTitle').value.trim();const grade=$('courseGrade').value.trim();const price=Number($('coursePrice').value);if(!title||!grade||!Number.isFinite(price)||price<0){msg('courseStatus','أدخل اسم الكورس والصف وسعرًا صحيحًا.',true);return;}const row={title,grade,description:$('courseDescription').value.trim(),price_egp:price,is_published:$('coursePublished').value==='true',is_free:$('courseFree').checked};const q=id?db.from('academy_courses').update(row).eq('id',Number(id)):db.from('academy_courses').insert(row);const {error}=await q;if(error){msg('courseStatus','لم يتم الحفظ: '+error.message,true);return;}msg('courseStatus',id?'تم تحديث الكورس.':'تمت إضافة الكورس.');resetCourseForm();await loadCourses();await loadOverview();}
+function resetLessonForm(){['lessonTitle','lessonContent','lessonVideo','lessonEditId'].forEach(id=>$(id).value='');$('lessonOrder').value='1';$('lessonFree').checked=false;msg('lessonStatus','');}
+async function loadLessons(){ $('lessonsRows').innerHTML='<tr><td colspan="6">جارٍ التحميل...</td></tr>';const [{data:lessons,error},{data:courses}]=await Promise.all([db.from('academy_lessons').select('id,course_id,title,video_url,content,lesson_order,is_free').order('lesson_order',{ascending:true}),db.from('academy_courses').select('id,title')]);if(error){$('lessonsRows').innerHTML='<tr><td colspan="6">تعذر تحميل الدروس: '+esc(error.message)+'</td></tr>';return;}const names=Object.fromEntries((courses||[]).map(c=>[c.id,c.title]));$('lessonsRows').innerHTML=(lessons||[]).map(l=>`<tr><td>${l.id}</td><td>${esc(names[l.course_id]||l.course_id)}</td><td>${esc(l.title)}</td><td>${esc(l.lesson_order)}</td><td>${l.is_free?'نعم':'لا'}</td><td><button class="light" onclick="editLesson(${l.id})">تعديل</button></td></tr>`).join('')||'<tr><td colspan="6">لا توجد دروس</td></tr>';}
+async function editLesson(id){const {data,error}=await db.from('academy_lessons').select('id,course_id,title,video_url,content,lesson_order,is_free').eq('id',id).single();if(error){msg('lessonStatus',error.message,true);return;}$('lessonEditId').value=data.id;$('lessonCourse').value=data.course_id;$('lessonTitle').value=data.title||'';$('lessonVideo').value=data.video_url||'';$('lessonContent').value=data.content||'';$('lessonOrder').value=data.lesson_order??1;$('lessonFree').checked=!!data.is_free;window.scrollTo({top:0,behavior:'smooth'});}
+async function saveLesson(){const id=$('lessonEditId').value;const course_id=Number($('lessonCourse').value);const title=$('lessonTitle').value.trim();const lesson_order=Number($('lessonOrder').value);if(!course_id||!title||!Number.isInteger(lesson_order)||lesson_order<1){msg('lessonStatus','اختر كورسًا وأدخل عنوان الدرس وترتيبًا صحيحًا.',true);return;}const row={course_id,title,video_url:$('lessonVideo').value.trim()||null,content:$('lessonContent').value.trim(),lesson_order,is_free:$('lessonFree').checked};const q=id?db.from('academy_lessons').update(row).eq('id',Number(id)):db.from('academy_lessons').insert(row);const {error}=await q;if(error){msg('lessonStatus','لم يتم الحفظ: '+error.message,true);return;}msg('lessonStatus',id?'تم تحديث الدرس.':'تمت إضافة الدرس.');resetLessonForm();await loadLessons();await loadOverview();}
+async function loadPurchases(){ $('purchasesRows').innerHTML='<tr><td colspan="7">جارٍ التحميل...</td></tr>';const {data,error}=await db.from('academy_purchases').select('id,user_id,course_id,payment_status,amount_egp,payment_reference,created_at').order('created_at',{ascending:false});if(error){$('purchasesRows').innerHTML='<tr><td colspan="7">تعذر تحميل الطلبات: '+esc(error.message)+'</td></tr>';msg('purchaseStatus','تحقق من صلاحية القراءة.',true);return;} $('purchasesRows').innerHTML=(data||[]).map(p=>`<tr><td>${p.id}</td><td>${esc(p.user_id)}</td><td>${esc(p.course_id)}</td><td>${esc(p.payment_status)}</td><td>${esc(p.amount_egp)} ج</td><td>${esc(p.payment_reference)}</td><td>${esc(p.created_at)}</td></tr>`).join('')||'<tr><td colspan="7">لا توجد طلبات شراء حتى الآن</td></tr>';msg('purchaseStatus',`عدد الطلبات: ${(data||[]).length}`);}
+
+db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT")showLogin();});
+verifyAdmin();
+</script>
+</body>
+</html>
