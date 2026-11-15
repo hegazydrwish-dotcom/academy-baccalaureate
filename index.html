@@ -328,7 +328,7 @@ const db = window.supabase.createClient(
 const msg = document.getElementById("authmsg"); 
   async function loadAnnouncements() {
   const ticker = document.getElementById("announcementTicker");
-  if (!ticker) return; من 
+  if (!ticker) return; 
 
   const { data, error } = await db
     .from("academy_announcements")
