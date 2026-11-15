@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الخلاصة التعليمية | لوحة المدير V1</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#101e32;--navy2:#172b45;--gold:#c9a45c;--bg:#f3f5f8;--ink:#172235;--muted:#758196;--line:#e5e9ef;--white:#fff;--green:#16845b;--red:#c44747}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;background:var(--gold);color:#172235;font-weight:700}.secondary{background:#edf1f6;color:#34445c}.danger{background:#fae9e9;color:#a52c2c}.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:var(--navy);color:#fff;padding:22px 15px}.brand{padding:8px 12px 24px;border-bottom:1px solid #ffffff20}.brand b{font-size:21px;color:#f0cf8b}.brand small{display:block;color:#b8c2d0;margin-top:7px}.nav{display:grid;gap:6px;margin-top:20px}.nav button{background:transparent;color:#dce3ec;text-align:right;font-weight:500}.nav button.active,.nav button:hover{background:#ffffff17;color:#f3d28e}.main{padding:26px;min-width:0}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}.top h1{margin:0;font-size:25px}.muted{color:var(--muted);font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.card,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 18px #14243a08}.card span{color:var(--muted);font-size:13px}.card strong{display:block;font-size:27px;margin:10px 0}.panel{margin-top:16px}.panel h3{margin:0 0 15px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.toolbar input,.toolbar select,.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:9px;padding:11px;background:#fff;min-width:0}.toolbar input{flex:1;min-width:180px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:right;padding:12px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:600;background:#fafbfd}.pill{display:inline-block;border-radius:30px;padding:5px 9px;background:#edf5f0;color:#18734e;font-size:11px}.pill.warn{background:#fff4df;color:#94651a}.pill.bad{background:#faeaea;color:#a52c2c}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px;font-size:13px;color:#59677a}.field input,.field select,.field textarea{width:100%}.field.full{grid-column:1/-1}.actions{display:flex;gap:7px}.hidden{display:none!important}.notice{background:#fff7e8;border:1px solid #f1dfba;color:#75551d;padding:12px;border-radius:10px;font-size:13px;line-height:1.8}.success{background:#eaf6ef;color:#17633f;border:1px solid #cce9d8}.login{max-width:460px;margin:7vh auto;padding:26px}.login h1{color:var(--navy)}.login .field{margin:12px 0}.login button{width:100%;margin-top:10px}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px}.empty{text-align:center;padding:35px;color:var(--muted)}.foot{margin-top:25px;color:var(--muted);font-size:11px;line-height:1.8}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{padding:12px}.brand{padding:5px 8px 12px}.nav{display:flex;overflow:auto;margin-top:10px}.nav button{white-space:nowrap;padding:9px}.main{padding:15px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
+@media(max-width:520px){.cards{grid-template-columns:1fr 1fr}.card{padding:13px}.top h1{font-size:19px}.formgrid{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div id="loginView" class="panel login">
+ <div class="brand"><b>الخلاصة التعليمية</b><small>لوحة الإدارة والتحكم — دكتور حجازي درويش</small></div>
+ <h1>تسجيل دخول المدير</h1>
+ <div class="notice">يمكنك تجربة الواجهة بالوضع التجريبي، أو الاتصال بمشروع Supabase باستخدام رابط المشروع والمفتاح العام (anon key). لا تضع مفتاح service_role هنا مطلقًا.</div>
+ <div class="field"><label>رابط Supabase</label><input id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
+ <div class="field"><label>المفتاح العام anon</label><input id="sbKey" placeholder="eyJ..."></div>
+ <div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" placeholder="admin@example.com"></div>
+ <div class="field"><label>كلمة المرور</label><input id="password" type="password"></div>
+ <button onclick="connectLogin()">اتصال وتسجيل الدخول</button>
+ <button class="secondary" onclick="demoLogin()" style="width:100%;margin-top:8px">الدخول للمعاينة التجريبية</button>
+ <p id="loginMsg" class="muted"></p>
+</div>
+<div id="app" class="shell hidden">
+<aside class="side"><div class="brand"><b>الخلاصة التعليمية</b><small>نظام إدارة التعليم</small></div>
+<nav class="nav" id="nav">
+<button class="active" data-page="overview">نظرة عامة</button><button data-page="students">الطلاب</button><button data-page="teachers">المعلمون</button><button data-page="catalog">الصفوف والمواد</button><button data-page="lessons">الدروس</button><button data-page="questions">بنك الأسئلة</button><button data-page="exams">الاختبارات</button><button data-page="subscriptions">الاشتراكات</button><button data-page="payments">المدفوعات</button><button data-page="pdf">ملفات PDF</button><button data-page="announcements">الإعلانات</button><button data-page="reports">التقارير</button><button data-page="settings">الإعدادات</button>
+</nav></aside>
+<main class="main"><div class="top"><div><h1 id="pageTitle">نظرة عامة</h1><div class="muted" id="modeText">وضع المعاينة التجريبي</div></div><button class="secondary" onclick="logout()">خروج</button></div>
+<div id="content"></div>
+<div class="foot">الخلاصة التعليمية © 2026 — هذه نسخة V1 تأسيسية. تفعيل البيانات الحقيقية يعتمد على تطبيق مخطط قاعدة البيانات وسياسات RLS واختبار حسابات الأدوار. الدفع وذكاء اصطناعي PDF غير مفعلين بمجرد ظهور الواجهة.</div>
+</main></div>
+<script>
+const $=id=>document.getElementById(id);let client=null,mode='demo',current='overview';
+const demo={
+ students:[{id:'ST-1001',full_name:'أحمد محمد علي',grade:'الصف الأول الإعدادي',phone:'01000000001',status:'نشط',progress:'68%'},{id:'ST-1002',full_name:'مريم خالد حسن',grade:'الصف الأول الإعدادي',phone:'01000000002',status:'نشط',progress:'82%'},{id:'ST-1003',full_name:'يوسف محمود',grade:'الصف الثاني الإعدادي',phone:'01000000003',status:'معلق',progress:'35%'}],
+ teachers:[{id:'T-01',full_name:'أ/ محمد إبراهيم',email:'teacher@example.com',status:'معلم'},{id:'T-02',full_name:'أ/ سارة أحمد',email:'sara@example.com',status:'معلم'}],
+ catalog:[{id:'G-01',name:'الصف الأول الإعدادي',stage:'الإعدادية'},{id:'G-02',name:'الصف الثاني الإعدادي',stage:'الإعدادية'}],
+ lessons:[{id:'L-01',title:'مقدمة في الدراسات الاجتماعية',subject:'الدراسات الاجتماعية',grade:'الأول الإعدادي'}],
+ questions:[{id:'Q-01',prompt:'ما عاصمة مصر؟',question_type:'اختيار من متعدد',status:'معتمد',difficulty:1}],
+ exams:[{id:'E-01',title:'اختبار الوحدة الأولى',status:'منشور',duration_minutes:30,question_count:10}],
+ subscriptions:[{id:'S-01',student_id:'ST-1001',plan:'اشتراك شهري',status:'نشط',ends_at:'2026-12-15'},{id:'S-02',student_id:'ST-1003',plan:'اشتراك فصلي',status:'معلق',ends_at:'—'}],
+ payments:[{id:'P-01',student_id:'ST-1001',amount_egp:250,provider:'تحويل يدوي',status:'تمت المراجعة'}],
+ pdf:[{id:'PDF-01',original_filename:'درس_الوحدة_الأولى.pdf',status:'بانتظار المراجعة'}],
+ announcements:[{id:'A-01',title:'مرحبًا بكم في الخلاصة التعليمية',status:'نشط'}]
+};
+let localData=JSON.parse(localStorage.getItem('khulasa_demo_v1')||'null')||structuredClone(demo);
+function saveDemo(){localStorage.setItem('khulasa_demo_v1',JSON.stringify(localData))}
+function demoLogin(){mode='demo';$('loginView').classList.add('hidden');$('app').classList.remove('hidden');$('modeText').textContent='وضع تجريبي — البيانات محفوظة على هذا الجهاز فقط';render()}
+async function connectLogin(){
+ const url=$('sbUrl').value.trim(),key=$('sbKey').value.trim(),email=$('email').value.trim(),password=$('password').value;
+ if(!url||!key||!email||!password){$('loginMsg').textContent='أكمل بيانات الاتصال وتسجيل الدخول.';return}
+ try{client=window.supabase.createClient(url,key);const {error}=await client.auth.signInWithPassword({email,password});if(error)throw error;
+ const {data:{user}}=await client.auth.getUser();const {data:profile,error:pe}=await client.from('profiles').select('role,full_name').eq('id',user.id).single();
+ if(pe)throw pe;if(profile.role!=='admin')throw new Error('هذا الحساب ليس مديرًا.');mode='live';localStorage.setItem('khulasa_url',url);localStorage.setItem('khulasa_key',key);$('loginView').classList.add('hidden');$('app').classList.remove('hidden');$('modeText').textContent='متصل بقاعدة Supabase — '+(profile.full_name||email);render()
+ }catch(e){$('loginMsg').textContent='تعذر الدخول: '+e.message}
+}
+async function logout(){if(client&&mode==='live')await client.auth.signOut();client=null;$('app').classList.add('hidden');$('loginView').classList.remove('hidden')}
+const labels={overview:'نظرة عامة',students:'إدارة الطلاب',teachers:'إدارة المعلمين',catalog:'الصفوف والمواد',lessons:'الدروس',questions:'بنك الأسئلة',exams:'الاختبارات',subscriptions:'الاشتراكات',payments:'المدفوعات',pdf:'ملفات PDF',announcements:'الإعلانات',reports:'التقارير',settings:'الإعدادات'};
+$('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-page]');if(!b)return;current=b.dataset.page;document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));render()});
+const tables={students:{table:'profiles',cols:['full_name','phone','grade_id','role'],title:'الطلاب'},teachers:{table:'profiles',cols:['full_name','phone','role'],title:'المعلمون'},catalog:{table:'grades',cols:['name','stage','sort_order'],title:'الصفوف'},lessons:{table:'lessons',cols:['title','subject_id','term_id'],title:'الدروس'},questions:{table:'questions',cols:['prompt','question_type','difficulty','status'],title:'الأسئلة'},exams:{table:'exams',cols:['title','subject_id','duration_minutes','question_count','status'],title:'الاختبارات'},subscriptions:{table:'subscriptions',cols:['student_id','plan_id','status','starts_at','ends_at'],title:'الاشتراكات'},payments:{table:'payments',cols:['student_id','amount_egp','provider','status'],title:'المدفوعات'},pdf:{table:'pdf_sources',cols:['original_filename','subject_id','status'],title:'ملفات PDF'},announcements:{table:'announcements',cols:['title','body','is_active'],title:'الإعلانات'}};
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function getRows(key){if(mode==='demo')return localData[key]||[];let t=tables[key]?.table;if(!t)return[];let q=client.from(t).select('*').limit(100);if(key==='students')q=q.eq('role','student');if(key==='teachers')q=q.eq('role','teacher');let {data,error}=await q;if(error)throw error;return data||[]}
+function overview(){return `<div class="cards"><div class="card"><span>الطلاب المسجلون</span><strong>${localData.students.length}</strong><small class="muted">إجمالي بيانات المعاينة</small></div><div class="card"><span>المعلمون</span><strong>${localData.teachers.length}</strong><small class="muted">حسابات المعلمين</small></div><div class="card"><span>الاختبارات</span><strong>${localData.exams.length}</strong><small class="muted">نماذج تجريبية</small></div><div class="card"><span>الاشتراكات النشطة</span><strong>${localData.subscriptions.filter(x=>x.status==='نشط').length}</strong><small class="muted">تحتاج تأكيدًا في قاعدة البيانات</small></div></div><div class="grid2"><div class="panel"><h3>مكونات النظام</h3><p>ملف الطالب • الدروس والتقدم • الامتحانات والدرجات • الاشتراكات والمدفوعات • الحضور والنشاط • ملفات PDF وبنك الأسئلة.</p></div><div class="panel"><h3>تنبيه التشغيل</h3><div class="notice">المعاينة لا تنشئ سجلات حقيقية. عند الاتصال بـ Supabase، تظهر البيانات التي تسمح بها صلاحيات الحساب. لا تعتبر واجهة المدير بديلًا عن RLS.</div></div></div>`}
+async function render(){ $('pageTitle').textContent=labels[current];let c=$('content');if(current==='overview'){c.innerHTML=overview();return}
+if(current==='reports'){c.innerHTML=`<div class="cards"><div class="card"><span>معدل إنجاز تجريبي</span><strong>62%</strong></div><div class="card"><span>طلبات دفع معلقة</span><strong>${localData.subscriptions.filter(x=>x.status==='معلق').length}</strong></div></div><div class="panel"><h3>تقارير المتابعة</h3><p>في وضع الاتصال المباشر، جهّز استعلامات التقارير بعد إضافة بيانات الحضور والتقدم الفعلية. أرقام المعاينة ليست تقارير إنتاجية.</p></div>`;return}
+if(current==='settings'){c.innerHTML=`<div class="panel"><h3>إعدادات المنصة</h3><p>اسم المنصة: الخلاصة التعليمية</p><p>المالك: دكتور حجازي درويش</p><p>اللغة: العربية — RTL</p><p>الصف التجريبي الوارد في المشروع: الصف الأول الإعدادي / الدراسات الاجتماعية / الفصل الدراسي الأول.</p><div class="notice">إعداد Kashier ومفاتيح الدفع يجب أن يكون على الخادم أو Edge Function فقط، وليس داخل HTML أو تطبيق الطالب.</div></div>`;return}
+let cfg=tables[current],rows=[];try{rows=await getRows(current)}catch(e){c.innerHTML=`<div class="notice">تعذر تحميل البيانات: ${esc(e.message)}. راجع الجدول وصلاحيات RLS.</div>`;return}
+let keys=rows.length?Object.keys(rows[0]).filter(k=>!['created_at','updated_at','provider_payload','extracted_text'].includes(k)).slice(0,7):cfg.cols;
+let head=keys.map(k=>`<th>${esc(k)}</th>`).join('');
+let body=rows.map(r=>`<tr>${keys.map(k=>`<td>${esc(typeof r[k]==='object'?JSON.stringify(r[k]):r[k])}</td>`).join('')}</tr>`).join('');
+let add=mode==='demo'?`<button onclick="addDemo('${current}')">إضافة سجل تجريبي</button>`:'<span class="muted">الإضافة المباشرة متاحة للكتالوج والإعلانات بعد استكمال حقولها. إنشاء حسابات Auth يتم من لوحة Supabase أو Edge Function آمنة.</span>';
+c.innerHTML=`<div class="panel"><div class="sectionhead"><div><h3>${cfg.title}</h3><div class="muted">${mode==='demo'?'سجلات توضيحية محلية':'بيانات مسترجعة من Supabase'}</div></div>${add}</div><div class="toolbar"><input id="filter" placeholder="بحث داخل السجلات..." oninput="filterRows()"><button class="secondary" onclick="render()">تحديث</button></div><div class="tablewrap"><table><thead><tr>${head}</tr></thead><tbody id="tbody">${body||`<tr><td colspan="${keys.length}" class="empty">لا توجد سجلات ظاهرة</td></tr>`}</tbody></table></div></div>`;
+window.currentRows=rows;window.currentKeys=keys;
+}
+function filterRows(){let v=$('filter').value.toLowerCase();$('tbody').innerHTML=window.currentRows.filter(r=>window.currentKeys.some(k=>String(r[k]??'').toLowerCase().includes(v))).map(r=>`<tr>${window.currentKeys.map(k=>`<td>${esc(r[k])}</td>`).join('')}</tr>`).join('')}
+function addDemo(k){let name=prompt('اكتب الاسم أو العنوان:');if(!name)return;let id=k.slice(0,2).toUpperCase()+'-'+Date.now().toString().slice(-5);let r={id};if(k==='students')Object.assign(r,{full_name:name,grade:'غير محدد',phone:'',status:'جديد',progress:'0%'});else if(k==='teachers')Object.assign(r,{full_name:name,email:'',status:'معلم'});else if(k==='catalog')Object.assign(r,{name,stage:'غير محدد'});else if(k==='lessons')Object.assign(r,{title:name,subject:'غير محدد',grade:'غير محدد'});else if(k==='questions')Object.assign(r,{prompt:name,question_type:'اختيار من متعدد',status:'مسودة',difficulty:1});else if(k==='exams')Object.assign(r,{title:name,status:'مسودة',duration_minutes:30,question_count:10});else if(k==='subscriptions')Object.assign(r,{student_id:name,plan:'اشتراك تجريبي',status:'معلق',ends_at:'—'});else if(k==='payments')Object.assign(r,{student_id:name,amount_egp:0,provider:'غير محدد',status:'معلق'});else if(k==='pdf')Object.assign(r,{original_filename:name,status:'مرفوع'});else Object.assign(r,{title:name,status:'نشط'});localData[k].unshift(r);saveDemo();render()}
+(async()=>{ $('sbUrl').value=localStorage.getItem('khulasa_url')||'';$('sbKey').value=localStorage.getItem('khulasa_key')||''; })();
+</script></body></html>
