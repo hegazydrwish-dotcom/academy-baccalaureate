@@ -84,6 +84,16 @@
 <section id="panel-live" class="panel"><div class="card"><h3>البث المباشر وأرشيف المحاضرات</h3><p>تحديد موعد المحاضرة والمادة والصف والمعلم ورابط البث والتسجيل، وتحديد الوصول المجاني أو للمشتركين.</p><div class="empty">يحتاج إلى جدول للمحاضرات وسياسة واضحة لحماية روابط المحتوى المسجل.</div></div></section>
 <section id="panel-reports" class="panel"><div class="card"><h3>التقارير والمتابعة</h3><p>تقارير التسجيلات، نشاط الطلاب، الكورسات، الدروس، المبيعات، الاشتراكات، ونتائج الاختبارات.</p><div class="empty">ستُبنى التقارير بعد توحيد مصادر البيانات والتحقق من العلاقات، حتى تكون الأرقام صحيحة وليست تقديرية.</div></div></section>
 <section id="panel-settings" class="panel"><div class="card"><h3>إعدادات المنصة</h3><p>اسم المنصة، الشعار، بيانات التواصل، إعدادات التسجيل، وسياسات المحتوى.</p><div class="empty">نحتاج تحديد هل توجد إعدادات محفوظة حاليًا أم سننشئ جدول إعدادات بعد مراجعة قاعدة البيانات.</div></div></section>
+ <div class="card">
+<h3>🔐 أمان حساب المدير</h3>
+<p class="muted">تغيير كلمة المرور الخاصة بحساب الإدارة.</p>
+<label>كلمة المرور الجديدة</label>
+<input id="adminNewPassword" type="password" minlength="8" placeholder="8 أحرف على الأقل">
+<label>تأكيد كلمة المرور الجديدة</label>
+<input id="adminConfirmPassword" type="password" minlength="8" placeholder="أعد كتابة كلمة المرور">
+<button class="primary" onclick="changeAdminPassword()">تغيير كلمة المرور</button>
+<p id="passwordStatus" class="status"></p>
+</div>
 </div></div>
 <div class="footer">منصة الخلاصة التعليمية · لوحة المدير · نسخة تأسيسية مستقلة</div>
 </section>
@@ -154,7 +164,38 @@ async function loadLessons(){ $('lessonsRows').innerHTML='<tr><td colspan="6">ج
 async function editLesson(id){const {data,error}=await db.from('academy_lessons').select('id,course_id,title,video_url,content,lesson_order,is_free').eq('id',id).single();if(error){msg('lessonStatus',error.message,true);return;}$('lessonEditId').value=data.id;$('lessonCourse').value=data.course_id;$('lessonTitle').value=data.title||'';$('lessonVideo').value=data.video_url||'';$('lessonContent').value=data.content||'';$('lessonOrder').value=data.lesson_order??1;$('lessonFree').checked=!!data.is_free;window.scrollTo({top:0,behavior:'smooth'});}
 async function saveLesson(){const id=$('lessonEditId').value;const course_id=Number($('lessonCourse').value);const title=$('lessonTitle').value.trim();const lesson_order=Number($('lessonOrder').value);if(!course_id||!title||!Number.isInteger(lesson_order)||lesson_order<1){msg('lessonStatus','اختر كورسًا وأدخل عنوان الدرس وترتيبًا صحيحًا.',true);return;}const row={course_id,title,video_url:$('lessonVideo').value.trim()||null,content:$('lessonContent').value.trim(),lesson_order,is_free:$('lessonFree').checked};const q=id?db.from('academy_lessons').update(row).eq('id',Number(id)):db.from('academy_lessons').insert(row);const {error}=await q;if(error){msg('lessonStatus','لم يتم الحفظ: '+error.message,true);return;}msg('lessonStatus',id?'تم تحديث الدرس.':'تمت إضافة الدرس.');resetLessonForm();await loadLessons();await loadOverview();}
 async function loadPurchases(){ $('purchasesRows').innerHTML='<tr><td colspan="7">جارٍ التحميل...</td></tr>';const {data,error}=await db.from('academy_purchases').select('id,user_id,course_id,payment_status,amount_egp,payment_reference,created_at').order('created_at',{ascending:false});if(error){$('purchasesRows').innerHTML='<tr><td colspan="7">تعذر تحميل الطلبات: '+esc(error.message)+'</td></tr>';msg('purchaseStatus','تحقق من صلاحية القراءة.',true);return;} $('purchasesRows').innerHTML=(data||[]).map(p=>`<tr><td>${p.id}</td><td>${esc(p.user_id)}</td><td>${esc(p.course_id)}</td><td>${esc(p.payment_status)}</td><td>${esc(p.amount_egp)} ج</td><td>${esc(p.payment_reference)}</td><td>${esc(p.created_at)}</td></tr>`).join('')||'<tr><td colspan="7">لا توجد طلبات شراء حتى الآن</td></tr>';msg('purchaseStatus',`عدد الطلبات: ${(data||[]).length}`);}
+async function changeAdminPassword(){
+ const password=$("adminNewPassword").value;
+ const confirm=$("adminConfirmPassword").value;
+ const status=$("passwordStatus");
 
+ if(password.length<8){
+  status.textContent="كلمة المرور يجب ألا تقل عن 8 أحرف.";
+  return;
+ }
+ if(password!==confirm){
+  status.textContent="كلمتا المرور غير متطابقتين.";
+  return;
+ }
+
+ const {data,error:userError}=await db.auth.getUser();
+ if(userError||!data.user||(data.user.email||"").toLowerCase()!==ADMIN_EMAIL.toLowerCase()){
+  status.textContent="تعذر التحقق من حساب المدير.";
+  return;
+ }
+
+ status.textContent="جارٍ تغيير كلمة المرور...";
+ const {error}=await db.auth.updateUser({password:password});
+
+ if(error){
+  status.textContent="فشل التغيير: "+error.message;
+  return;
+ }
+
+ status.textContent="تم تغيير كلمة المرور بنجاح.";
+ $("adminNewPassword").value="";
+ $("adminConfirmPassword").value="";
+}
 db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT")showLogin();});
 verifyAdmin();
 </script>
