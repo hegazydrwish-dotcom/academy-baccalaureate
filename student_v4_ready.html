@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10243a">
+<title>لوحة الطالب | الخلاصة التعليمية</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f5f3ed;color:#243447;line-height:1.8}
+header{background:#10243a;color:#e8bd62;padding:22px;text-align:center;border-bottom:3px solid #e8bd62}
+main{max-width:850px;margin:25px auto;padding:15px}
+.card{background:white;padding:22px;border-radius:15px;margin-bottom:18px;box-shadow:0 3px 12px #0001}
+h2,h3{color:#10243a}
+input{width:100%;padding:13px;margin:8px 0;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button,.link{display:inline-block;border:0;border-radius:8px;padding:12px 20px;margin:5px;background:#10243a;color:#e8bd62;font-size:15px;cursor:pointer;text-decoration:none}
+button:disabled{opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.tile{border:1px solid #eee;border-radius:12px;padding:17px;background:#fff}
+.muted{color:#718096;font-size:14px}
+.status{white-space:pre-wrap;color:#a83232}
+#courses,#lessons,#exams,#progress,#payments,#attendance{white-space:pre-line}
+#portal{display:none}
+footer{text-align:center;padding:20px;background:#10243a;color:#e8bd62}
+</style>
+</head>
+<body>
+
+<header>
+<h1>منصة الخلاصة التعليمية</h1>
+<p>بوابة الطالب الشخصية</p>
+</header>
+
+<main>
+
+<section class="card" id="loginBox">
+<h2>تسجيل دخول الطالب</h2>
+<p class="muted">ادخل بيانات حسابك للوصول إلى ملفك التعليمي.</p>
+<input id="email" type="email" placeholder="البريد الإلكتروني">
+<input id="password" type="password" placeholder="كلمة المرور">
+<button id="loginBtn" onclick="login()">تسجيل الدخول</button>
+<p><a href="#" class="link" onclick="showForgotPassword(); return false;">نسيت كلمة المرور؟</a></p>
+<p id="status" class="status" aria-live="polite"></p>
+<a class="link" href="index.html">العودة إلى الصفحة الرئيسية</a>
+</section>
+
+<section class="card" id="forgotBox" style="display:none">
+  <h2>استعادة كلمة المرور</h2>
+  <p class="muted">اكتب البريد الإلكتروني المسجل، وسنرسل إليه رابط إعادة تعيين كلمة المرور.</p>
+  <input id="resetEmail" type="email" placeholder="البريد الإلكتروني">
+  <button id="resetBtn" onclick="sendResetEmail()">إرسال رابط الاستعادة</button>
+  <p id="resetStatus" class="status" aria-live="polite"></p>
+  <a class="link" href="#" onclick="showLogin(); return false;">العودة إلى تسجيل الدخول</a>
+</section>
+
+<section class="card" id="updatePasswordBox" style="display:none">
+  <h2>إنشاء كلمة مرور جديدة</h2>
+  <p class="muted">اكتب كلمة المرور الجديدة مرتين.</p>
+  <input id="newPassword" type="password" placeholder="كلمة المرور الجديدة" autocomplete="new-password">
+  <input id="confirmPassword" type="password" placeholder="تأكيد كلمة المرور" autocomplete="new-password">
+  <button id="updatePasswordBtn" onclick="updatePassword()">حفظ كلمة المرور</button>
+  <p id="updateStatus" class="status" aria-live="polite"></p>
+</section>
+
+<section id="portal">
+<div class="card">
+<h2>مرحباً بك في حسابك</h2>
+<h3 id="studentName">الطالب</h3>
+<p id="studentEmail"></p>
+<p id="studentGrade"></p>
+<button onclick="logout()">تسجيل الخروج</button>
+</div>
+
+<div class="grid">
+<div class="tile">
+<h3>📚 كورساتي</h3>
+<p class="muted">الكورسات المسجل بها الطالب وحالة كل تسجيل.</p>
+<div id="courses">سيتم تحميل بيانات الكورسات هنا.</div>
+</div>
+
+<div class="tile">
+<h3>📖 دروسي</h3>
+<p class="muted">الدروس ومتابعة نسبة الإنجاز.</p>
+<div id="lessons">سيتم عرض الدروس هنا.</div>
+</div>
+
+<div class="tile">
+<h3>📝 امتحاناتي</h3>
+<p class="muted">الامتحانات والإجابات والنتائج.</p>
+<div id="exams">سيتم عرض الامتحانات هنا.</div>
+</div>
+
+<div class="tile">
+<h3>📊 مستواي الدراسي</h3>
+<p class="muted">متابعة الدرجات والتقدم التعليمي.</p>
+<div id="progress">سيتم عرض التقدم الدراسي هنا.</div>
+</div>
+
+<div class="tile">
+<h3>💳 اشتراكاتي</h3>
+<p class="muted">حالة الاشتراكات والمدفوعات.</p>
+<div id="payments">سيتم عرض الاشتراكات هنا.</div>
+</div>
+
+<div class="tile">
+<h3>📅 الحضور والنشاط</h3>
+<p class="muted">متابعة الحضور وسجل النشاط.</p>
+<div id="attendance">سيتم عرض سجل الحضور هنا.</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+منصة الخلاصة التعليمية © 2026
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const db = window.supabase.createClient(
+  "https://kadldmmcrskvqfagtxpd.supabase.co",
+  "sb_publishable_N-FBnKA7FXoa8o5DEoLVGA_HUeWLgcV",
+  {
+    auth: {
+      storageKey: "khulasa-student-auth-token"
+    }
+  }
+);
+
+const loginBox = document.getElementById("loginBox");
+const forgotBox = document.getElementById("forgotBox");
+const updatePasswordBox = document.getElementById("updatePasswordBox");
+const portal = document.getElementById("portal");
+const statusBox = document.getElementById("status");
+const RECOVERY_REDIRECT_URL = "https://hegazydrwish-dotcom.github.io/academy-baccalaureate/student.html";
+
+function hideAuthPanels() {
+  loginBox.style.display = "none";
+  forgotBox.style.display = "none";
+  updatePasswordBox.style.display = "none";
+  portal.style.display = "none";
+}
+
+function showLogin(message="") {
+  loadSequence++;
+  hideAuthPanels();
+  loginBox.style.display = "block";
+  statusBox.textContent = message;
+}
+
+function showForgotPassword() {
+  hideAuthPanels();
+  forgotBox.style.display = "block";
+  const currentEmail = document.getElementById("email").value.trim();
+  document.getElementById("resetEmail").value = currentEmail;
+  document.getElementById("resetStatus").textContent = "";
+}
+
+async function sendResetEmail() {
+  const email = document.getElementById("resetEmail").value.trim();
+  const btn = document.getElementById("resetBtn");
+  const message = document.getElementById("resetStatus");
+  if (!email) {
+    message.textContent = "اكتب البريد الإلكتروني أولًا.";
+    return;
+  }
+  btn.disabled = true;
+  message.textContent = "جارٍ إرسال رابط الاستعادة...";
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: RECOVERY_REDIRECT_URL
+  });
+  btn.disabled = false;
+  message.textContent = error
+    ? "تعذر إرسال الرابط: " + error.message
+    : "إذا كان البريد مسجلًا، ستصلك رسالة تحتوي على رابط إعادة تعيين كلمة المرور. افحص صندوق الوارد والرسائل غير المرغوب فيها.";
+}
+
+async function updatePassword() {
+  const password = document.getElementById("newPassword").value;
+  const confirmation = document.getElementById("confirmPassword").value;
+  const btn = document.getElementById("updatePasswordBtn");
+  const message = document.getElementById("updateStatus");
+  if (password.length < 8) {
+    message.textContent = "اجعل كلمة المرور 8 أحرف على الأقل.";
+    return;
+  }
+  if (password !== confirmation) {
+    message.textContent = "كلمتا المرور غير متطابقتين.";
+    return;
+  }
+  btn.disabled = true;
+  message.textContent = "جارٍ حفظ كلمة المرور...";
+  const { error } = await db.auth.updateUser({ password });
+  btn.disabled = false;
+  if (error) {
+    message.textContent = "تعذر تحديث كلمة المرور: " + error.message;
+    return;
+  }
+  document.getElementById("newPassword").value = "";
+  document.getElementById("confirmPassword").value = "";
+  showLogin("تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن.");
+  await db.auth.signOut();
+}
+
+async function showStudent(user) {
+  const info = user.user_metadata || {};
+
+  if (info.account_type !== "student") {
+    showLogin("هذا الحساب غير مخصص للطلاب.");
+    return;
+  }
+
+  loginBox.style.display = "none";
+  portal.style.display = "block";
+
+  document.getElementById("studentName").textContent =
+    info.full_name || "الطالب";
+
+  document.getElementById("studentEmail").textContent =
+    "البريد الإلكتروني: " + user.email;
+
+  document.getElementById("studentGrade").textContent =
+    "الصف الدراسي: " + (info.grade || "غير محدد");
+  await loadStudentData(user);
+}
+
+// قراءة البيانات المسموح بها فقط وفق سياسات Supabase RLS.
+let loadSequence = 0;
+async function loadStudentData(user) {
+  const sequence = ++loadSequence;
+  const set = (id, value) => {
+    if (sequence === loadSequence) document.getElementById(id).textContent = value;
+  };
+  ["courses", "lessons", "exams", "progress", "payments", "attendance"]
+    .forEach(id => set(id, "جارٍ تحميل البيانات..."));
+
+  const profile = await db.from("academy_student_profiles")
+    .select("full_name,grade,status")
+    .eq("user_id", user.id).maybeSingle();
+  if (profile.error) {
+    set("studentGrade", "تعذر تحميل الملف الدراسي: " + profile.error.message);
+  } else if (profile.data && sequence === loadSequence) {
+    document.getElementById("studentName").textContent = profile.data.full_name || "الطالب";
+    document.getElementById("studentGrade").textContent = "الصف الدراسي: " + (profile.data.grade || "غير محدد");
+  }
+
+  const enrollment = await db.from("academy_enrollments")
+    .select("course_id,status,enrolled_at")
+    .eq("student_id", user.id)
+    .order("enrolled_at", { ascending: false });
+
+  if (enrollment.error) {
+    set("courses", "تعذر تحميل تسجيلاتك: " + enrollment.error.message);
+    set("lessons", "تعذر تحميل الدروس لأن تسجيلات الكورسات لم تُحمّل.");
+  } else {
+    const enrolled = enrollment.data || [];
+    const ids = [...new Set(enrolled.map(row => row.course_id).filter(id => id !== null && id !== undefined))];
+
+    if (ids.length === 0) {
+      set("courses", "لا توجد كورسات مسجلة في حسابك حتى الآن.");
+      set("lessons", "ستظهر دروسك هنا بعد التسجيل في أحد الكورسات.");
+    } else {
+      const coursesResult = await db.from("academy_courses")
+        .select("id,title,grade,description,is_published,is_free,price_egp,price")
+        .in("id", ids);
+
+      if (coursesResult.error) {
+        set("courses", "تعذر تحميل بيانات الكورسات: " + coursesResult.error.message);
+      } else {
+        const courseRows = coursesResult.data || [];
+        const byId = new Map(courseRows.map(course => [String(course.id), course]));
+        const lines = enrolled.map((row, index) => {
+          const course = byId.get(String(row.course_id));
+          if (!course) return (index + 1) + ". تعذر العثور على بيانات الكورس رقم " + row.course_id;
+          const statusLabels = {
+            active: "اشتراك نشط",
+            pending: "قيد المراجعة",
+            cancelled: "ملغي",
+            completed: "مكتمل",
+            expired: "منتهي"
+          };
+          const status = statusLabels[row.status] || (row.status ? "حالة التسجيل: " + row.status : "مسجل");
+          const visibility = course.is_published === true ? "منشور" : "غير منشور";
+          const grade = course.grade ? "\nالصف: " + course.grade : "";
+          return (index + 1) + ". " + (course.title || "كورس بدون عنوان") +
+            "\nحالة التسجيل: " + status +
+            "\nحالة النشر: " + visibility + grade;
+        });
+        set("courses", lines.join("\n\n"));
+      }
+      // عرض الدروس مؤجل لحين ضبط سياسة تتيح محتوى الطالب المسجل دون كشف المحتوى المدفوع لغير المشتركين.
+      set("lessons", "تم تحميل تسجيلات الكورسات. سنفعّل الدروس بعد ضبط صلاحيات الوصول للمحتوى.");
+    }
+  }
+  set("exams", "سيتم ربط الامتحانات في المرحلة التالية.");
+  set("progress", "سيتم ربط التقدم والدرجات في المرحلة التالية.");
+  set("payments", "سيتم ربط الاشتراكات والمدفوعات في المرحلة التالية.");
+  set("attendance", "سيتم ربط الحضور في المرحلة التالية.");
+}
+
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("loginBtn");
+
+  if (!email || !password) {
+    statusBox.textContent = "أدخل البريد الإلكتروني وكلمة المرور.";
+    return;
+  }
+
+  btn.disabled = true;
+  statusBox.textContent = "جارٍ تسجيل الدخول...";
+
+  const {data, error} = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  btn.disabled = false;
+
+  if (error) {
+    statusBox.textContent = "تعذر تسجيل الدخول: " + error.message;
+    return;
+  }
+
+  const info = data.user.user_metadata || {};
+
+  if (info.account_type !== "student") {
+    await db.auth.signOut();
+    showLogin("هذا الحساب ليس حساب طالب. استخدم حساب الطالب الصحيح.");
+    return;
+  }
+
+  await showStudent(data.user);
+}
+
+async function logout() {
+  const {error} = await db.auth.signOut();
+
+  if (error) {
+    statusBox.textContent = error.message;
+    return;
+  }
+
+  document.getElementById("password").value = "";
+  showLogin("تم تسجيل الخروج بنجاح.");
+}
+
+async function checkSession() {
+  const {data, error} = await db.auth.getSession();
+
+  if (error || !data.session) {
+    showLogin();
+    return;
+  }
+
+  const user = data.session.user;
+  const info = user.user_metadata || {};
+
+  if (info.account_type !== "student") {
+    await db.auth.signOut();
+    showLogin();
+    return;
+  }
+
+  await showStudent(user);
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "PASSWORD_RECOVERY") {
+    hideAuthPanels();
+    updatePasswordBox.style.display = "block";
+  } else if (event === "SIGNED_OUT") {
+    showLogin();
+  } else if (session && event !== "INITIAL_SESSION") {
+    showStudent(session.user);
+  }
+});
+
+checkSession();
+</script>
+
+</body>
+</html>
