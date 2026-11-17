@@ -84,11 +84,36 @@ async function connectLogin(){
 async function logout(){if(client&&mode==='live')await client.auth.signOut();client=null;$('app').classList.add('hidden');$('loginView').classList.remove('hidden')}
 const labels={overview:'نظرة عامة',students:'إدارة الطلاب',teachers:'إدارة المعلمين',catalog:'الصفوف والمواد',lessons:'الدروس',questions:'بنك الأسئلة',exams:'الاختبارات',subscriptions:'الاشتراكات',payments:'المدفوعات',pdf:'ملفات PDF',announcements:'الإعلانات',reports:'التقارير',settings:'الإعدادات'};
 $('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-page]');if(!b)return;current=b.dataset.page;document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));render()});
-const tables={students:{table:'profiles',cols:['full_name','phone','grade_id','role'],title:'الطلاب'},teachers:{table:'profiles',cols:['full_name','phone','role'],title:'المعلمون'},catalog:{table:'grades',cols:['name','stage','sort_order'],title:'الصفوف'},lessons:{table:'lessons',cols:['title','subject_id','term_id'],title:'الدروس'},questions:{table:'questions',cols:['prompt','question_type','difficulty','status'],title:'الأسئلة'},exams:{table:'exams',cols:['title','subject_id','duration_minutes','question_count','status'],title:'الاختبارات'},subscriptions:{table:'subscriptions',cols:['student_id','plan_id','status','starts_at','ends_at'],title:'الاشتراكات'},payments:{table:'payments',cols:['student_id','amount_egp','provider','status'],title:'المدفوعات'},pdf:{table:'pdf_sources',cols:['original_filename','subject_id','status'],title:'ملفات PDF'},announcements:{table:'announcements',cols:['title','body','is_active'],title:'الإعلانات'}};
+
+const tables={students:{table:'academy_student_profiles',cols:['user_id','full_name','phone','grade','classroom','student_code','status'],title:'الطلاب'},teachers:{table:'academy_staff',cols:['user_id','role','active','created_at'],title:'حسابات فريق العمل'},catalog:{table:'academy_classes',cols:['grade_name','class_name','academic_year','active'],title:'الصفوف والفصول'},lessons:{table:'academy_lessons',cols:['id','course_id','title','video_url','content','lesson_order','is_free'],title:'الدروس'},questions:{table:'academy_question_bank',cols:['id','course_id','question_text','question_type','difficulty','explanation'],title:'بنك الأسئلة'},exams:{table:'academy_exams',cols:['id','course_id','title','duration_minutes','total_marks','pass_marks','is_published'],title:'الاختبارات'},subscriptions:{table:'academy_subscriptions',cols:['id','student_id','course_id','purchase_id','status','starts_at','ends_at'],title:'الاشتراكات'},payments:{table:'academy_purchases',cols:['id','user_id','course_id','amount_egp','currency','payment_provider','payment_status','payment_reference','paid_at'],title:'المدفوعات'},pdf:{table:'academy_resources',cols:['id','title','resource_type','course_id','lesson_id','file_path','external_url','is_published'],title:'الملفات والموارد'},announcements:{table:'academy_announcements',cols:['id','message','active','starts_at','ends_at','created_by'],title:'الإعلانات'}};
+
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function getRows(key){if(mode==='demo')return localData[key]||[];let t=tables[key]?.table;if(!t)return[];let q=client.from(t).select('*').limit(100);if(key==='students')q=q.eq('role','student');if(key==='teachers')q=q.eq('role','teacher');let {data,error}=await q;if(error)throw error;return data||[]}
-function overview(){return `<div class="cards"><div class="card"><span>الطلاب المسجلون</span><strong>${localData.students.length}</strong><small class="muted">إجمالي بيانات المعاينة</small></div><div class="card"><span>المعلمون</span><strong>${localData.teachers.length}</strong><small class="muted">حسابات المعلمين</small></div><div class="card"><span>الاختبارات</span><strong>${localData.exams.length}</strong><small class="muted">نماذج تجريبية</small></div><div class="card"><span>الاشتراكات النشطة</span><strong>${localData.subscriptions.filter(x=>x.status==='نشط').length}</strong><small class="muted">تحتاج تأكيدًا في قاعدة البيانات</small></div></div><div class="grid2"><div class="panel"><h3>مكونات النظام</h3><p>ملف الطالب • الدروس والتقدم • الامتحانات والدرجات • الاشتراكات والمدفوعات • الحضور والنشاط • ملفات PDF وبنك الأسئلة.</p></div><div class="panel"><h3>تنبيه التشغيل</h3><div class="notice">المعاينة لا تنشئ سجلات حقيقية. عند الاتصال بـ Supabase، تظهر البيانات التي تسمح بها صلاحيات الحساب. لا تعتبر واجهة المدير بديلًا عن RLS.</div></div></div>`}
-async function render(){ $('pageTitle').textContent=labels[current];let c=$('content');if(current==='overview'){c.innerHTML=overview();return}
+
+async function getRows(key){
+if(mode==='demo')return localData[key]||[];
+if(key==='catalog'){
+const [a,b]=await Promise.all([
+client.from('academy_classes').select('*').limit(100),
+client.from('academy_subjects').select('*').limit(100)
+]);
+if(a.error)throw a.error;
+if(b.error)throw b.error;
+return [...(a.data||[]).map(x=>({...x,record_type:'صف/فصل'})),...(b.data||[]).map(x=>({...x,record_type:'مادة'}))];
+}
+const t=tables[key]?.table;
+if(!t)return[];
+let q=client.from(t).select('*').limit(100);
+if(key==='teachers')q=q.eq('role','teacher');
+const {data,error}=await q;
+if(error)throw error;
+return data||[];
+}
+
+
+async function overview(){if(mode==='demo')return `<div class="notice">أنت في وضع المعاينة التجريبية؛ الأرقام ليست بيانات حقيقية.</div><div class="cards"><div class="card"><span>الطلاب تجريبي</span><strong>${localData.students.length}</strong></div><div class="card"><span>المعلمون تجريبي</span><strong>${localData.teachers.length}</strong></div></div>`;const count=async(table,role)=>{let q=client.from(table).select('*',{count:'exact',head:true});if(role)q=q.eq('role',role);const {count,error}=await q;if(error)throw error;return count??0};try{const [students,teachers,exams,subscriptions]=await Promise.all([count('academy_student_profiles'),count('academy_staff','teacher'),count('academy_exams'),count('academy_subscriptions')]);return `<div class="notice success">بيانات حقيقية من قاعدة Supabase</div><div class="cards"><div class="card"><span>الطلاب</span><strong>${students}</strong></div><div class="card"><span>المعلمون</span><strong>${teachers}</strong></div><div class="card"><span>الاختبارات</span><strong>${exams}</strong></div><div class="card"><span>الاشتراكات</span><strong>${subscriptions}</strong></div></div>`}catch(e){return `<div class="notice">تعذر تحميل المؤشرات: ${esc(e.message)}</div>`}}
+
+async function render(){ $('pageTitle').textContent=labels[current];let c=$('content');if(current==='overview'){ c.innerHTML=await overview();
+;return}
 if(current==='reports'){c.innerHTML=`<div class="cards"><div class="card"><span>معدل إنجاز تجريبي</span><strong>62%</strong></div><div class="card"><span>طلبات دفع معلقة</span><strong>${localData.subscriptions.filter(x=>x.status==='معلق').length}</strong></div></div><div class="panel"><h3>تقارير المتابعة</h3><p>في وضع الاتصال المباشر، جهّز استعلامات التقارير بعد إضافة بيانات الحضور والتقدم الفعلية. أرقام المعاينة ليست تقارير إنتاجية.</p></div>`;return}
 if(current==='settings'){c.innerHTML=`<div class="panel"><h3>إعدادات المنصة</h3><p>اسم المنصة: الخلاصة التعليمية</p><p>المالك: دكتور حجازي درويش</p><p>اللغة: العربية — RTL</p><p>الصف التجريبي الوارد في المشروع: الصف الأول الإعدادي / الدراسات الاجتماعية / الفصل الدراسي الأول.</p><div class="notice">إعداد Kashier ومفاتيح الدفع يجب أن يكون على الخادم أو Edge Function فقط، وليس داخل HTML أو تطبيق الطالب.</div></div>`;return}
 let cfg=tables[current],rows=[];try{rows=await getRows(current)}catch(e){c.innerHTML=`<div class="notice">تعذر تحميل البيانات: ${esc(e.message)}. راجع الجدول وصلاحيات RLS.</div>`;return}
