@@ -71,7 +71,8 @@
 <section id="panel-lessons" class="panel"><div class="card"><h3>إدارة الدروس والمحتوى</h3><p class="muted tiny">إضافة وتعديل الدروس وربطها بالكورس. رفع الملفات والفيديوهات سيُضاف بعد إعداد Storage.</p>
 <label>الكورس</label><select id="lessonCourse"></select><label>عنوان الدرس</label><input id="lessonTitle" placeholder="عنوان الدرس"><label>المحتوى النصي</label><textarea id="lessonContent" rows="3" placeholder="محتوى الدرس"></textarea>
 <div class="two"><div><label>رابط الفيديو (اختياري)</label><input id="lessonVideo" type="url" placeholder="https://..."></div><div><label>ترتيب الدرس</label><input id="lessonOrder" type="number" min="1" value="1"></div></div>
-<label><input id="lessonFree" type="checkbox" style="width:auto"> درس مجاني</label><div class="toolbar"><button class="gold" onclick="saveLesson()">حفظ الدرس</button><button class="light" onclick="resetLessonForm()">تفريغ الحقول</button><button class="light" onclick="loadLessons()">تحديث الدروس</button><span id="lessonStatus" class="muted tiny"></span></div>
+<label>رابط ملف PDF (اختياري)</label><input id="lessonPdf" type="url" placeholder="https://...">
+ <label><input id="lessonFree" type="checkbox" style="width:auto"> درس مجاني</label><div class="toolbar"><button class="gold" onclick="saveLesson()">حفظ الدرس</button><button class="light" onclick="resetLessonForm()">تفريغ الحقول</button><button class="light" onclick="loadLessons()">تحديث الدروس</button><span id="lessonStatus" class="muted tiny"></span></div>
 <input id="lessonEditId" type="hidden"><div class="tablewrap"><table><thead><tr><th>رقم</th><th>الكورس</th><th>الدرس</th><th>الترتيب</th><th>مجاني</th><th>إجراء</th></tr></thead><tbody id="lessonsRows"><tr><td colspan="6">اضغط تحديث الدروس لعرض البيانات</td></tr></tbody></table></div></div></section>
 <section id="panel-library" class="panel"><div class="card"><h3>مكتبة الملفات التعليمية</h3><p>رفع ملفات PDF والملفات المساندة وتنظيمها حسب المرحلة والصف والمادة والكورس.</p><div class="notice">رفع الملفات يحتاج تحديد Storage Bucket وسياسات القراءة والتحميل. لن نضع ملفات الطلاب أو المحتوى المدفوع في مساحة عامة دون مراجعة الحماية.</div><div class="empty">واجهة تنظيم المكتبة جاهزة للتوصيل بعد فحص إعدادات Supabase Storage.</div></div></section>
 <section id="panel-students" class="panel"><div class="card"><h3>إدارة الطلاب</h3><p>البحث عن الطالب، عرض بياناته وصفه، حالة الحساب، والكورسات المشترك بها.</p><div class="empty">نحتاج تحديد جدول ملف الطالب وربطه الآمن بحسابات Supabase Auth قبل عرض أو تعديل بيانات شخصية.</div></div></section>
@@ -159,10 +160,71 @@ async function loadCourses(){
 }
 async function editCourse(id){const {data,error}=await db.from('academy_courses').select('id,title,grade,description,price_egp,is_published,is_free').eq('id',id).single();if(error){msg('courseStatus',error.message,true);return;} $('courseEditId').value=data.id;$('courseTitle').value=data.title||'';$('courseGrade').value=data.grade||'';$('courseDescription').value=data.description||'';$('coursePrice').value=data.price_egp??0;$('coursePublished').value=String(!!data.is_published);$('courseFree').checked=!!data.is_free;window.scrollTo({top:0,behavior:'smooth'});}
 async function saveCourse(){const id=$('courseEditId').value;const title=$('courseTitle').value.trim();const grade=$('courseGrade').value.trim();const price=Number($('coursePrice').value);if(!title||!grade||!Number.isFinite(price)||price<0){msg('courseStatus','أدخل اسم الكورس والصف وسعرًا صحيحًا.',true);return;}const row={title,grade,description:$('courseDescription').value.trim(),price_egp:price,is_published:$('coursePublished').value==='true',is_free:$('courseFree').checked};const q=id?db.from('academy_courses').update(row).eq('id',Number(id)):db.from('academy_courses').insert(row);const {error}=await q;if(error){msg('courseStatus','لم يتم الحفظ: '+error.message,true);return;}msg('courseStatus',id?'تم تحديث الكورس.':'تمت إضافة الكورس.');resetCourseForm();await loadCourses();await loadOverview();}
-function resetLessonForm(){['lessonTitle','lessonContent','lessonVideo','lessonEditId'].forEach(id=>$(id).value='');$('lessonOrder').value='1';$('lessonFree').checked=false;msg('lessonStatus','');}
-async function loadLessons(){ $('lessonsRows').innerHTML='<tr><td colspan="6">جارٍ التحميل...</td></tr>';const [{data:lessons,error},{data:courses}]=await Promise.all([db.from('academy_lessons').select('id,course_id,title,video_url,content,lesson_order,is_free').order('lesson_order',{ascending:true}),db.from('academy_courses').select('id,title')]);if(error){$('lessonsRows').innerHTML='<tr><td colspan="6">تعذر تحميل الدروس: '+esc(error.message)+'</td></tr>';return;}const names=Object.fromEntries((courses||[]).map(c=>[c.id,c.title]));$('lessonsRows').innerHTML=(lessons||[]).map(l=>`<tr><td>${l.id}</td><td>${esc(names[l.course_id]||l.course_id)}</td><td>${esc(l.title)}</td><td>${esc(l.lesson_order)}</td><td>${l.is_free?'نعم':'لا'}</td><td><button class="light" onclick="editLesson(${l.id})">تعديل</button></td></tr>`).join('')||'<tr><td colspan="6">لا توجد دروس</td></tr>';}
+function resetLessonForm(){['lessonTitle','lessonContent','lessonVideo','lessonPdf','lessonEditId'].forEach(id=>$(id).value='');$('lessonOrder').value='1';$('lessonFree').checked=false;msg('lessonStatus','');}
+async function loadLessons(){
+ $('lessonsRows').innerHTML='<tr><td colspan="6">جارٍ التحميل...</td></tr>';
+ const [{data:lessons,error},{data:courses}]=await Promise.all([
+  db.from('academy_lessons').select('id,course_id,title,video_url,pdf_url,content,lesson_order,is_free').order('lesson_order',{ascending:true}),
+  db.from('academy_courses').select('id,title')
+ ]);
+ if(error){
+  $('lessonsRows').innerHTML='<tr><td colspan="6">تعذر تحميل الدروس: '+esc(error.message)+'</td></tr>';
+  return;
+ }
+ const names=Object.fromEntries((courses||[]).map(c=>[c.id,c.title]));
+ $('lessonsRows').innerHTML=(lessons||[]).map(l=>`<tr><td>${l.id}</td><td>${esc(names[l.course_id]||l.course_id)}</td><td>${esc(l.title)}</td><td>${esc(l.lesson_order)}</td><td>${l.is_free?'نعم':'لا'}</td><td><button class="light" onclick="editLesson(${l.id})">تعديل</button></td></tr>`).join('')||'<tr><td colspan="6">لا توجد دروس</td></tr>';
+}
+ async function editLesson(id){
+ const {data,error}=await db.from('academy_lessons').select('id,course_id,title,video_url,pdf_url,content,lesson_order,is_free').eq('id',id).single();
+ if(error){msg('lessonStatus',error.message,true);return;}
+ $('lessonEditId').value=data.id;
+ $('lessonCourse').value=data.course_id;
+ $('lessonTitle').value=data.title||'';
+ $('lessonVideo').value=data.video_url||'';
+ $('lessonPdf').value=data.pdf_url||'';
+ $('lessonContent').value=data.content||'';
+ $('lessonOrder').value=data.lesson_order??1;
+ $('lessonFree').checked=!!data.is_free;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+ 
+  
+  
+ 
+ 
+  
+  
+ 
+ 
+ 
+
 async function editLesson(id){const {data,error}=await db.from('academy_lessons').select('id,course_id,title,video_url,content,lesson_order,is_free').eq('id',id).single();if(error){msg('lessonStatus',error.message,true);return;}$('lessonEditId').value=data.id;$('lessonCourse').value=data.course_id;$('lessonTitle').value=data.title||'';$('lessonVideo').value=data.video_url||'';$('lessonContent').value=data.content||'';$('lessonOrder').value=data.lesson_order??1;$('lessonFree').checked=!!data.is_free;window.scrollTo({top:0,behavior:'smooth'});}
-async function saveLesson(){const id=$('lessonEditId').value;const course_id=Number($('lessonCourse').value);const title=$('lessonTitle').value.trim();const lesson_order=Number($('lessonOrder').value);if(!course_id||!title||!Number.isInteger(lesson_order)||lesson_order<1){msg('lessonStatus','اختر كورسًا وأدخل عنوان الدرس وترتيبًا صحيحًا.',true);return;}const row={course_id,title,video_url:$('lessonVideo').value.trim()||null,content:$('lessonContent').value.trim(),lesson_order,is_free:$('lessonFree').checked};const q=id?db.from('academy_lessons').update(row).eq('id',Number(id)):db.from('academy_lessons').insert(row);const {error}=await q;if(error){msg('lessonStatus','لم يتم الحفظ: '+error.message,true);return;}msg('lessonStatus',id?'تم تحديث الدرس.':'تمت إضافة الدرس.');resetLessonForm();await loadLessons();await loadOverview();}
+async function saveLesson(){
+ const id=$('lessonEditId').value;
+ const course_id=Number($('lessonCourse').value);
+ const title=$('lessonTitle').value.trim();
+ const lesson_order=Number($('lessonOrder').value);
+ if(!course_id||!title||!Number.isInteger(lesson_order)||lesson_order<1){
+  msg('lessonStatus','اختر كورسًا وأدخل عنوان الدرس وترتيبًا صحيحًا.',true);
+  return;
+ }
+ const row={
+  course_id,
+  title,
+  video_url:$('lessonVideo').value.trim()||null,
+  pdf_url:$('lessonPdf').value.trim()||null,
+  content:$('lessonContent').value.trim(),
+  lesson_order,
+  is_free:$('lessonFree').checked
+ };
+ const q=id?db.from('academy_lessons').update(row).eq('id',Number(id)):db.from('academy_lessons').insert(row);
+ const {error}=await q;
+ if(error){msg('lessonStatus','لم يتم الحفظ: '+error.message,true);return;}
+ msg('lessonStatus',id?'تم تحديث الدرس.':'تمت إضافة الدرس.');
+ resetLessonForm();
+ await loadLessons();
+ await loadOverview();
+}
 async function loadPurchases(){ $('purchasesRows').innerHTML='<tr><td colspan="7">جارٍ التحميل...</td></tr>';const {data,error}=await db.from('academy_purchases').select('id,user_id,course_id,payment_status,amount_egp,payment_reference,created_at').order('created_at',{ascending:false});if(error){$('purchasesRows').innerHTML='<tr><td colspan="7">تعذر تحميل الطلبات: '+esc(error.message)+'</td></tr>';msg('purchaseStatus','تحقق من صلاحية القراءة.',true);return;} $('purchasesRows').innerHTML=(data||[]).map(p=>`<tr><td>${p.id}</td><td>${esc(p.user_id)}</td><td>${esc(p.course_id)}</td><td>${esc(p.payment_status)}</td><td>${esc(p.amount_egp)} ج</td><td>${esc(p.payment_reference)}</td><td>${esc(p.created_at)}</td></tr>`).join('')||'<tr><td colspan="7">لا توجد طلبات شراء حتى الآن</td></tr>';msg('purchaseStatus',`عدد الطلبات: ${(data||[]).length}`);}
 async function changeAdminPassword(){
  const password=$("adminNewPassword").value;
