@@ -50,13 +50,37 @@ let localData=JSON.parse(localStorage.getItem('khulasa_demo_v1')||'null')||struc
 function saveDemo(){localStorage.setItem('khulasa_demo_v1',JSON.stringify(localData))}
 function demoLogin(){mode='demo';$('loginView').classList.add('hidden');$('app').classList.remove('hidden');$('modeText').textContent='وضع تجريبي — البيانات محفوظة على هذا الجهاز فقط';render()}
 async function connectLogin(){
- const url=$('sbUrl').value.trim(),key=$('sbKey').value.trim(),email=$('email').value.trim(),password=$('password').value;
- if(!url||!key||!email||!password){$('loginMsg').textContent='أكمل بيانات الاتصال وتسجيل الدخول.';return}
- try{client=window.supabase.createClient(url,key);const {error}=await client.auth.signInWithPassword({email,password});if(error)throw error;
- const {data:{user}}=await client.auth.getUser();const {data:profile,error:pe}=await client.from('profiles').select('role,full_name').eq('id',user.id).single();
- if(pe)throw pe;if(profile.role!=='admin')throw new Error('هذا الحساب ليس مديرًا.');mode='live';localStorage.setItem('khulasa_url',url);localStorage.setItem('khulasa_key',key);$('loginView').classList.add('hidden');$('app').classList.remove('hidden');$('modeText').textContent='متصل بقاعدة Supabase — '+(profile.full_name||email);render()
- }catch(e){$('loginMsg').textContent='تعذر الدخول: '+e.message}
-}
+    const url=$('sbUrl').value.trim();
+    const key=$('sbKey').value.trim();
+    const email=$('email').value.trim();
+    const password=$('password').value;
+    if(!url||!key||!email||!password){$('loginMsg').textContent='أكمل بيانات الاتصال وتسجيل الدخول.';return;}
+    try{
+      client=window.supabase.createClient(url,key);
+      const {error}=await client.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      const {data:{user},error:ue}=await client.auth.getUser();
+      if(ue)throw ue;
+      if(!user)throw new Error('لم يتم العثور على المستخدم.');
+      const {data:staff,error:se}=await client.from('academy_staff').select('role,active').eq('user_id',user.id).maybeSingle();
+      if(se)throw se;
+      if(!staff||staff.active!==true||staff.role!=='admin')throw new Error('هذا الحساب ليس مديرًا نشطًا.');
+      mode='live';
+      localStorage.setItem('khulasa_url',url);
+      localStorage.setItem('khulasa_key',key);
+      $('loginView').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('modeText').textContent='متصل بقاعدة Supabase — مدير المنصة';
+      render();
+    }catch(e){$('loginMsg').textContent='تعذر الدخول: '+e.message;}
+  }
+ 
+ 
+ 
+ 
+ 
+ 
+
 async function logout(){if(client&&mode==='live')await client.auth.signOut();client=null;$('app').classList.add('hidden');$('loginView').classList.remove('hidden')}
 const labels={overview:'نظرة عامة',students:'إدارة الطلاب',teachers:'إدارة المعلمين',catalog:'الصفوف والمواد',lessons:'الدروس',questions:'بنك الأسئلة',exams:'الاختبارات',subscriptions:'الاشتراكات',payments:'المدفوعات',pdf:'ملفات PDF',announcements:'الإعلانات',reports:'التقارير',settings:'الإعدادات'};
 $('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-page]');if(!b)return;current=b.dataset.page;document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));render()});
