@@ -401,9 +401,20 @@ document.getElementById("login").onclick = async () => {
   const email = document.getElementById("semail").value.trim();
   const password = document.getElementById("spass").value;
 
-  const {error} = await db.auth.signInWithPassword({email,password});
-  msg.textContent = error ? error.message : "تم تسجيل الدخول بنجاح";
-  if(!error) refreshStudent();
+  if (!email || !password) {
+  msg.textContent = "أدخل البريد الإلكتروني وكلمة المرور.";
+  return;
+}
+
+const {error} = await db.auth.signInWithPassword({email,password});
+if (error) {
+  msg.textContent = "تعذر تسجيل الدخول: " + error.message;
+  return;
+}
+msg.textContent = "تم تسجيل الدخول بنجاح. جارٍ فتح بوابة الطالب...";
+window.location.href = "student_v4_ready.html";
+  
+  
 };
 
 document.getElementById("logout").onclick = async () => {
