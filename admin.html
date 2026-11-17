@@ -198,7 +198,7 @@ async function loadLessons(){
  
  
 
-async function editLesson(id){const {data,error}=await db.from('academy_lessons').select('id,course_id,title,video_url,content,lesson_order,is_free').eq('id',id).single();if(error){msg('lessonStatus',error.message,true);return;}$('lessonEditId').value=data.id;$('lessonCourse').value=data.course_id;$('lessonTitle').value=data.title||'';$('lessonVideo').value=data.video_url||'';$('lessonContent').value=data.content||'';$('lessonOrder').value=data.lesson_order??1;$('lessonFree').checked=!!data.is_free;window.scrollTo({top:0,behavior:'smooth'});}
+
 async function saveLesson(){
  const id=$('lessonEditId').value;
  const course_id=Number($('lessonCourse').value);
